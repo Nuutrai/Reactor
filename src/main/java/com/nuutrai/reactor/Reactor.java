@@ -1,9 +1,9 @@
 package com.nuutrai.reactor;
 
-import org.bukkit.block.BlockFace;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 public final class Reactor extends JavaPlugin {
@@ -11,6 +11,7 @@ public final class Reactor extends JavaPlugin {
     public static Reactor instance;
     public static boolean HALTTICK = false;
     public static Logger logger;
+    public static File dataFolder;
 
     @Override
     public void onEnable() {
@@ -18,6 +19,7 @@ public final class Reactor extends JavaPlugin {
 
         instance = this;
         logger = this.getLogger();
+        dataFolder = this.getDataFolder();
 
     }
 

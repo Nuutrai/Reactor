@@ -1,30 +1,46 @@
 package com.nuutrai.reactor.player;
 
-import com.nuutrai.reactor.entity.Sellable;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
-public class PlayerData {
+import java.io.Serializable;
+
+public class PlayerData implements Serializable {
 
     private int balance;
+    private Claim claim;
+    private Player player;
+    private int heat;
 
-
-    public Sellable getFromLocation(Vector pos) {
-//        for
-        return null;
+    public int getBalance() {
+        return balance;
     }
 
-    public Claim getClaim(Player player) {
-        return new Claim(player, new Bound(player, new Vector(0,0,0), new Vector(0,0,0)));
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
-    public void loadPlayerData(Player player) {
-
-        // Put handler stuff here
-
-        return;
+    public Claim getClaim() {
+        return claim;
     }
 
+    public void setClaim(Claim claim) {
+        this.claim = claim;
+    }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public int getHeat() {
+        return heat;
+    }
+
+    public void setHeat(int heat) {
+        this.heat = heat;
+    }
 
 }
