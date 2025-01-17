@@ -1,5 +1,6 @@
 package com.nuutrai.reactor.entity;
 
+import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.player.Claim;
 import com.nuutrai.reactor.player.PlayerData;
 import org.bukkit.block.Block;
@@ -30,7 +31,7 @@ public abstract class Sellable {
         this.sellAmount = sellAmount;
         this.heat = heat;
         this.block = block;
-        this.claim = PlayerData.getClaim(player);
+        this.claim = DataManager.get(player).getClaim();
     }
 
     public abstract void tick();

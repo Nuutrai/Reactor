@@ -1,10 +1,11 @@
 package com.nuutrai.reactor.store;
 
-import com.nuutrai.reactor.entity.Sellable;
+import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.player.PlayerData;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import javax.xml.crypto.Data;
 
 public abstract class Buyable {
 
@@ -27,8 +28,8 @@ public abstract class Buyable {
     }
 
     public void buy(Player player, Buyable item) {
-        int balance = PlayerData.getBalance(player);
-        PlayerData.setBalance(player, balance-item.cost);
+        int balance = DataManager.get(player).getBalance();
+        DataManager.get(player).setBalance(balance-item.cost);
     }
 
 

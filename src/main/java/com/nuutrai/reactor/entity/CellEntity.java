@@ -3,11 +3,8 @@ package com.nuutrai.reactor.entity;
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.player.Claim;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import javax.xml.crypto.Data;
 
 public class CellEntity extends Sellable {
 
@@ -19,9 +16,7 @@ public class CellEntity extends Sellable {
 
     @Override
     public void tick() {
-        for (Player player: Bukkit.getOnlinePlayers()) {
-            DataManager.getPlayerData(player).
-        }
+
     }
 
     @Override

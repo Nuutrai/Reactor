@@ -12,12 +12,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
@@ -26,13 +23,11 @@ public class DataManager {
     private static Map<Player, PlayerData> playerDataMap = Maps.newHashMap();
 
 
-    public static PlayerData getPlayerData(Player player) {
+    public static PlayerData get(Player player) {
         return playerDataMap.get(player);
     }
 
-    public void loadPlayerData(Player player) {
-
-        // Put handler stuff here
+    public static void loadPlayerData(Player player) {
 
         byte[] deserialized = Base64.getDecoder().decode(readFromFile(player));
         PlayerData playerData = SerializationUtils.deserialize(deserialized);
@@ -42,40 +37,24 @@ public class DataManager {
             ClaimHandler.add(claim);
     }
 
-    public void unloadPlayerData(Player player) {
-
-        // Put more handler stuff here
-
-        savePlayerData(player);
-
+    public static void unloadPlayerData(Player player) {
         PlayerData playerData = playerDataMap.get(player);
         Claim claim = playerData.getClaim();
         if (claim != null)
             ClaimHandler.remove(claim);
+        savePlayerData(player);
     }
 
-    public void savePlayerData(Player player) {
-
+    public static void savePlayerData(Player player) {
         PlayerData playerData = playerDataMap.get(player);
         byte[] serialized = SerializationUtils.serialize(playerData);
         String encodedData = Base64.getEncoder().encodeToString(serialized);
         writeToFile(player, encodedData);
     }
 
-    public void initData(Player player) {
-        try {
-            File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
-            if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            logger.severe("An error occurred whilst writing to a file.");
-        }
-    }
+    // File stuff
 
-    public void writeToFile(Player player, String string) {
+    private static void writeToFile(Player player, String string) {
         try {
 
             File file = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
@@ -94,7 +73,7 @@ public class DataManager {
         }
     }
 
-    public String readFromFile(Player player) {
+    private static String readFromFile(Player player) {
         try {
             File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
             Scanner myReader = new Scanner(myObj);
@@ -105,6 +84,19 @@ public class DataManager {
             logger.severe("An error occurred.");
         }
         return null;
+    }
+
+    private static void initData(Player player) {
+        try {
+            File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            logger.severe("An error occurred whilst writing to a file.");
+        }
     }
 
 }
