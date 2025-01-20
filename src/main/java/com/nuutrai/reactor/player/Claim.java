@@ -4,18 +4,21 @@ import com.nuutrai.reactor.entity.EntityHandler;
 import com.nuutrai.reactor.entity.Sellable;
 import org.bukkit.entity.Player;
 
-public class Claim {
+import java.io.Serializable;
+import java.util.UUID;
+
+public class Claim implements Serializable {
 
     public EntityHandler entityHandler = new EntityHandler();
-    private Player player;
+    private UUID player;
     private Bound bound;
 
     public Claim(Player player, Bound bound) {
-        this.player = player;
+        this.player = player.getUniqueId();
         this.bound = bound;
     }
 
-    public Player getPlayer() {
+    public UUID getPlayer() {
         return player;
     }
 

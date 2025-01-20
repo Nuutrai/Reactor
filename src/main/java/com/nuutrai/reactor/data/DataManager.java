@@ -66,7 +66,7 @@ public class DataManager {
             FileWriter myWriter = new FileWriter(file);
             myWriter.write(string);
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
+            logger.info("Successfully wrote to the file.");
 
         } catch (IOException e) {
             logger.severe("An error occurred whilst writing to a file.");
@@ -75,27 +75,39 @@ public class DataManager {
 
     private static String readFromFile(Player player) {
         try {
-            File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
-            Scanner myReader = new Scanner(myObj);
+            File file = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
+
+            if (!file.exists()) {
+                initData(player);
+            }
+
+            Scanner myReader = new Scanner(file);
             String data = myReader.nextLine();
             myReader.close();
             return data;
         } catch (FileNotFoundException e) {
             logger.severe("An error occurred.");
+            logger.severe(e.getMessage());
         }
         return null;
     }
 
     private static void initData(Player player) {
+
+        PlayerData playerData = new PlayerData(player);
+        playerDataMap.put(player, playerData);
+
         try {
             File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
             if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
+                logger.info("File created: " + myObj.getName());
+                savePlayerData(player);
             } else {
-                System.out.println("File already exists.");
+                logger.info("File already exists.");
             }
         } catch (IOException e) {
             logger.severe("An error occurred whilst writing to a file.");
+            logger.severe(e.getMessage());
         }
     }
 

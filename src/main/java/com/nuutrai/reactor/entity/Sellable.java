@@ -7,7 +7,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public abstract class Sellable {
+import java.io.Serializable;
+
+public abstract class Sellable implements Serializable {
 
     private String id;
     private Player player;

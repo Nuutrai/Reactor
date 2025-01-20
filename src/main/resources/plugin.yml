@@ -1,4 +1,4 @@
-name: Cell
+name: Reactor
 version: '0.1.0'
 main: com.nuutrai.reactor.Reactor
 api-version: '1.21'
