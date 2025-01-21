@@ -18,6 +18,10 @@ public class Claim implements Serializable {
         this.bound = bound;
     }
 
+    public Claim(Player p) {
+        this.player = p.getUniqueId();
+    }
+
     public UUID getPlayer() {
         return player;
     }

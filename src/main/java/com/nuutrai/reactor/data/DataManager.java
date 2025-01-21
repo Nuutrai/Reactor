@@ -1,6 +1,7 @@
 package com.nuutrai.reactor.data;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.player.Claim;
 import com.nuutrai.reactor.player.ClaimHandler;
@@ -29,8 +30,9 @@ public class DataManager {
 
     public static void loadPlayerData(Player player) {
 
-        byte[] deserialized = Base64.getDecoder().decode(readFromFile(player));
-        PlayerData playerData = SerializationUtils.deserialize(deserialized);
+        Gson gson = new Gson();
+
+        PlayerData playerData = gson.fromJson(readFromFile(player), PlayerData.class);
         Claim claim = playerData.getClaim();
 
         if (claim != null)
@@ -47,9 +49,9 @@ public class DataManager {
 
     public static void savePlayerData(Player player) {
         PlayerData playerData = playerDataMap.get(player);
-        byte[] serialized = SerializationUtils.serialize(playerData);
-        String encodedData = Base64.getEncoder().encodeToString(serialized);
-        writeToFile(player, encodedData);
+        Gson gson = new Gson();
+        String json = gson.toJson(playerData);
+        writeToFile(player, json);
     }
 
     // File stuff
@@ -82,9 +84,12 @@ public class DataManager {
             }
 
             Scanner myReader = new Scanner(file);
-            String data = myReader.nextLine();
+            StringBuilder data = new StringBuilder();
+            while (myReader.hasNext()) {
+                data.append(myReader.nextLine());
+            }
             myReader.close();
-            return data;
+            return data.toString();
         } catch (FileNotFoundException e) {
             logger.severe("An error occurred.");
             logger.severe(e.getMessage());

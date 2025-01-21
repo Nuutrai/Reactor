@@ -11,9 +11,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.logging.Logger;
 
+@TODO
+/**
+ * Change Claim player handling to org.bukkit.entity.Player if it works
+ */
+
 public final class Reactor extends JavaPlugin {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Reactor.class);
     public static Reactor instance;
     public static boolean HALTTICK = false;
     public static Logger logger;

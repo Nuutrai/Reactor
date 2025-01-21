@@ -13,7 +13,15 @@ public abstract class Buyable {
     private int cost;
     private String name;
     private String description;
+    private double heat;
     private Material item;
+
+    /**
+     *  Health represents both durability & heat content.
+     */
+    private double health;
+    // Needed?
+    //    private boolean isDurability;
 
     public Buyable(String id, int cost, String name, String description, Material item) {
         this.id = id;
@@ -25,6 +33,18 @@ public abstract class Buyable {
 
     public String getId() {
         return id;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getHeat() {
+        return heat;
     }
 
     public void buy(Player player, Buyable item) {

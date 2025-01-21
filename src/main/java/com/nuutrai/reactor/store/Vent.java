@@ -6,19 +6,19 @@ import org.bukkit.Material;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class VentItem extends Buyable {
-    public VentItem(String id, int cost, String name, String description, Material item) {
+public class Vent extends Buyable {
+    public Vent(String id, int cost, String name, String description, Material item) {
         super(id, cost, name, description, item);
     }
 
-    private static Map<String, VentItem> CELLS = Maps.newHashMap();
+    private static Map<String, Vent> CELLS = Maps.newHashMap();
 
-    public static VentItem BASIC = new VentItem("basic_vent",
+    public static Vent BASIC = new Vent("basic_vent",
             50,
             "Basic Heat Vent",
             "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
             Material.IRON_INGOT);
-    public static VentItem ADVANCED = new VentItem(
+    public static Vent ADVANCED = new Vent(
             "advanced_vent",
             12500,
             "Advanced Heat Vent",
@@ -26,11 +26,11 @@ public class VentItem extends Buyable {
             Material.IRON_INGOT);
 
     static {
-        ArrayList<VentItem> vents = new ArrayList<>();
+        ArrayList<Vent> vents = new ArrayList<>();
         vents.add(BASIC);
         vents.add(ADVANCED);
 
-        for (VentItem vent : vents) {
+        for (Vent vent : vents) {
             CELLS.put(vent.getId(), vent);
         }
     }

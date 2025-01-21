@@ -1,11 +1,12 @@
 package com.nuutrai.reactor.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class EntityHandler implements Serializable {
 
-    private HashSet<Sellable> entities = new HashSet<>();
+    private ArrayList<Sellable> entities = new ArrayList<>();
 
     public void add(Sellable entity) {
         entities.add(entity);

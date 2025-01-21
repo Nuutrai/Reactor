@@ -1,5 +1,6 @@
 package com.nuutrai.reactor.player;
 
+import com.nuutrai.reactor.util.Compare;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
@@ -21,13 +22,12 @@ public class ClaimHandler {
         return claims;
     }
 
-    public static ArrayList<Claim> getClaimsOfPlayer(Player player) {
-        ArrayList<Claim> claimsOfPlayer = new ArrayList<>();
+    public static Claim getClaimOfPlayer(Player player) {
         for (Claim claim: getClaims()) {
-            if (player.equals(claim.getPlayer()))
-                claimsOfPlayer.add(claim);
+            if (Compare.player(player, claim.getPlayer()))
+                return claim;
         }
-        return claimsOfPlayer;
+        return null;
     }
 
 }
