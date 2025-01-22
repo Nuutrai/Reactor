@@ -11,6 +11,7 @@ import com.nuutrai.reactor.player.PlayerData;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import org.bukkit.Warning;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -29,6 +30,7 @@ public class RegisterCommands {
     private static final Logger log = LoggerFactory.getLogger(RegisterCommands.class);
 
     @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
+    @Deprecated
         public static void loadDataEditor() {
             LifecycleEventManager<Plugin> manager = Reactor.instance.getLifecycleManager();
             manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {

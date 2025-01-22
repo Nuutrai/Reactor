@@ -60,7 +60,7 @@ public class DataManager {
     private static void writeToFile(Player player, String string) {
         try {
 
-            File file = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
+            File file = new File(Reactor.dataFolder, player.getUniqueId() + ".json");
 
             if (!file.exists()) {
                 initData(player);
@@ -78,7 +78,7 @@ public class DataManager {
 
     private static String readFromFile(Player player) {
         try {
-            File file = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
+            File file = new File(Reactor.dataFolder, player.getUniqueId() + ".json");
 
             if (!file.exists()) {
                 initData(player);
@@ -104,7 +104,7 @@ public class DataManager {
         playerDataMap.put(player, playerData);
 
         try {
-            File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".pd");
+            File myObj = new File(Reactor.dataFolder, player.getUniqueId() + ".json");
             if (myObj.createNewFile()) {
                 logger.info("File created: " + myObj.getName());
                 savePlayerData(player);

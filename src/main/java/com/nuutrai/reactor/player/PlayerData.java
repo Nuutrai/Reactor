@@ -44,15 +44,12 @@ public class PlayerData implements Serializable {
         return heat;
     }
 
-    public void setHeat(String heat) {
-        setHeat(Integer.parseInt(heat));
-    }
     public void setHeat(int heat) {
         this.heat = heat;
     }
 
     @Override
     public String toString() {
-        return this.player + ".pd";
+        return this.player + ".json";
     }
 }
