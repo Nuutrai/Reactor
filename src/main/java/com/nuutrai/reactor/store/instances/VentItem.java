@@ -1,26 +1,26 @@
 package com.nuutrai.reactor.store.instances;
 
-import com.nuutrai.reactor.store.VentItem;
+import com.nuutrai.reactor.store.Vent;
 import org.bukkit.Material;
 
-public enum Vent {
+public enum VentItem {
 
-    BASIC(new VentItem("basic_vent",
+    BASIC(new Vent("basic_vent",
             50,
-            "Basic Heat Vent",
+            "Basic Heat VentItem",
             "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
             Material.IRON_INGOT)),
-    ADVANCED(new VentItem(
+    ADVANCED(new Vent(
             "advanced_vent",
             12500,
-            "Advanced Heat Vent",
+            "Advanced Heat VentItem",
             "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
             Material.IRON_INGOT)),
     ;
 
-    final VentItem ventInstance;
+    final Vent ventInstance;
 
-    Vent (VentItem ventInstance) {
+    VentItem (Vent ventInstance) {
         this.ventInstance = ventInstance;
     }
 

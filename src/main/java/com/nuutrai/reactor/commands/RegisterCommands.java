@@ -14,7 +14,10 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,8 +26,10 @@ import static io.papermc.paper.command.brigadier.Commands.argument;
 
 public class RegisterCommands {
 
-        @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
-        public void loadDataEditor() {
+    private static final Logger log = LoggerFactory.getLogger(RegisterCommands.class);
+
+    @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
+        public static void loadDataEditor() {
             LifecycleEventManager<Plugin> manager = Reactor.instance.getLifecycleManager();
             manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
                 final Commands commands = event.registrar();
@@ -38,15 +43,22 @@ public class RegisterCommands {
                                                     return 0;
 
                                                 PlayerData playerData = DataManager.get(player);
-                                                try {
-                                                    String name = StringArgumentType.getString(ctx, "name"));
+                                                String name = StringArgumentType.getString(ctx, "name");
+                                                String value = StringArgumentType.getString(ctx, "value");
 
-                                                    PlayerData.class.getField(name).set(playerData, (PlayerData.class.getField(name).getType()) );
-                                                } catch (Exception e) {
-                                                    logger.severe(Arrays.toString(e.getStackTrace()));
+                                                logger.info("Hello??");
+                                                logger.info(playerData.toString());
+                                                logger.info(name);
+                                                logger.info(value);
+
+                                                try {
+                                                    PlayerData.class.getMethod(name, String.class).invoke(playerData, value);
+                                                    return Command.SINGLE_SUCCESS;
+                                                } catch (IllegalAccessException | NoSuchMethodException |
+                                                         InvocationTargetException e) {
+                                                    throw new RuntimeException(e);
                                                 }
 
-                                                return Command.SINGLE_SUCCESS;
                                             }))
                                         .executes(ctx -> {
                                             ctx.getSource().getSender().sendMessage("Uh, what was that?");

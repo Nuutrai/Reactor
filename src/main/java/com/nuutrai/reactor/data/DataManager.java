@@ -33,6 +33,7 @@ public class DataManager {
         Gson gson = new Gson();
 
         PlayerData playerData = gson.fromJson(readFromFile(player), PlayerData.class);
+        playerDataMap.put(player, playerData);
         Claim claim = playerData.getClaim();
 
         if (claim != null)

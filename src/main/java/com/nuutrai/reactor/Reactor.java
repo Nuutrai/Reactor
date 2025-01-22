@@ -1,5 +1,6 @@
 package com.nuutrai.reactor;
 
+import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.listeners.PlayerJoin;
 import com.nuutrai.reactor.listeners.PlayerLeave;
 import com.nuutrai.reactor.listeners.PlayerPlaceBlock;
@@ -31,6 +32,8 @@ public final class Reactor extends JavaPlugin {
         logger = this.getLogger();
         dataFolder = this.getDataFolder();
 
+        logger.info("Reactor startup initiated");
+
         ensureDataFolder();
 
         logger.info("Data folder: " + dataFolder);
@@ -38,6 +41,10 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeave(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceBlock(), this);
+
+        RegisterCommands.loadDataEditor();
+
+        logger.info("Reactor startup complete");
 
     }
 

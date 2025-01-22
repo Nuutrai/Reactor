@@ -46,6 +46,10 @@ public abstract class Sellable implements Serializable {
         this.maxHealth = type.getHealth();
     }
 
+    public static void create(Sellable s) {
+        // No clue at the moment, just here for now
+    }
+
     public Buyable getType() {
         return type;
     }

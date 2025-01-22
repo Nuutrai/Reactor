@@ -18,9 +18,9 @@ public class PlayerJoin implements Listener {
         Player p = e.getPlayer();
 
         if (p.getName().equals("Nuutrai")) {
-            Claim claim = new Claim(p);
-            claim.newEntity(Cell.);
-            DataManager.get(p).setClaim(new Claim(p));
+//            Claim claim = new Claim(p);
+//            claim.newEntity(Cell.);
+//            DataManager.get(p).setClaim(new Claim(p));
         }
 
     }

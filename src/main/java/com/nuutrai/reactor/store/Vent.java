@@ -15,13 +15,13 @@ public class Vent extends Buyable {
 
     public static Vent BASIC = new Vent("basic_vent",
             50,
-            "Basic Heat Vent",
+            "Basic Heat VentItem",
             "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
             Material.IRON_INGOT);
     public static Vent ADVANCED = new Vent(
             "advanced_vent",
             12500,
-            "Advanced Heat Vent",
+            "Advanced Heat VentItem",
             "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
             Material.IRON_INGOT);
 
