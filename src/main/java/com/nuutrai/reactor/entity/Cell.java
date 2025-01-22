@@ -23,7 +23,7 @@ public class Cell extends Sellable {
 
     @Override
     public void tick() {
-        MiniMessage.builder()
+
     }
 
     @Override
