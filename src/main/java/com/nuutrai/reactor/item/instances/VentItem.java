@@ -1,6 +1,6 @@
-package com.nuutrai.reactor.store.instances;
+package com.nuutrai.reactor.item.instances;
 
-import com.nuutrai.reactor.store.Vent;
+import com.nuutrai.reactor.item.Vent;
 import org.bukkit.Material;
 
 public enum VentItem {

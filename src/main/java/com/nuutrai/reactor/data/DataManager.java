@@ -6,8 +6,11 @@ import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.player.Claim;
 import com.nuutrai.reactor.player.ClaimHandler;
 import com.nuutrai.reactor.player.PlayerData;
+import com.nuutrai.reactor.player.PlayerDataWrapper;
 import org.apache.commons.lang3.SerializationUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,6 +36,9 @@ public class DataManager {
         Gson gson = new Gson();
 
         PlayerData playerData = gson.fromJson(readFromFile(player), PlayerData.class);
+        if (playerData.selection == null) {
+            playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
+        }
         playerDataMap.put(player, playerData);
         Claim claim = playerData.getClaim();
 
@@ -50,8 +56,9 @@ public class DataManager {
 
     public static void savePlayerData(Player player) {
         PlayerData playerData = playerDataMap.get(player);
+        PlayerDataWrapper playerDataWrapper = new PlayerDataWrapper(playerData);
         Gson gson = new Gson();
-        String json = gson.toJson(playerData);
+        String json = gson.toJson(playerDataWrapper);
         writeToFile(player, json);
     }
 

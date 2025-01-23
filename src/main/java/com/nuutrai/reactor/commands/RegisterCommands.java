@@ -8,6 +8,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.player.PlayerData;
+import com.nuutrai.reactor.store.Store;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -25,11 +26,27 @@ import java.util.List;
 import static com.nuutrai.reactor.Reactor.logger;
 import static io.papermc.paper.command.brigadier.Commands.argument;
 
+@SuppressWarnings("UnstableApiUsage")
 public class RegisterCommands {
 
-    private static final Logger log = LoggerFactory.getLogger(RegisterCommands.class);
+    public static void loadInventoryTest() {
+        Reactor.manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            final Commands commands = event.registrar();
+            commands.register(
+                    Commands.literal("testInv")
+                            .executes(ctx -> {
+                                if (ctx.getSource().getSender() instanceof Player player) {
+                                    Store.setup(player);
+                                    return Command.SINGLE_SUCCESS;
+                                }
+                                return 0;
+                            })
+                            .build()
+            );
+        });
+    }
 
-    @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
+    @SuppressWarnings("NullableProblems")
     @Deprecated
         public static void loadDataEditor() {
             LifecycleEventManager<Plugin> manager = Reactor.instance.getLifecycleManager();

@@ -1,4 +1,4 @@
-package com.nuutrai.reactor.store;
+package com.nuutrai.reactor.item;
 
 import com.google.common.collect.Maps;
 import org.bukkit.Material;

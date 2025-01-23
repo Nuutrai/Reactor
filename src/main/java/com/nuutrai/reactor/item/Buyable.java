@@ -1,11 +1,8 @@
-package com.nuutrai.reactor.store;
+package com.nuutrai.reactor.item;
 
 import com.nuutrai.reactor.data.DataManager;
-import com.nuutrai.reactor.player.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import javax.xml.crypto.Data;
 
 public abstract class Buyable {
 
@@ -47,6 +44,11 @@ public abstract class Buyable {
         return heat;
     }
 
+    public Material getItem() {
+        return item;
+    }
+
+    // Needed here? Probably put in store stuff
     public void buy(Player player, Buyable item) {
         int balance = DataManager.get(player).getBalance();
         DataManager.get(player).setBalance(balance-item.cost);

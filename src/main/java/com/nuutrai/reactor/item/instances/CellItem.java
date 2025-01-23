@@ -1,7 +1,7 @@
-package com.nuutrai.reactor.store.instances;
+package com.nuutrai.reactor.item.instances;
 
 import com.google.common.collect.Maps;
-import com.nuutrai.reactor.store.Cell;
+import com.nuutrai.reactor.item.Cell;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 

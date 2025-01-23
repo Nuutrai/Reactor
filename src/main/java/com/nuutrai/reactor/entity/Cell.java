@@ -2,8 +2,7 @@ package com.nuutrai.reactor.entity;
 
 import com.google.common.collect.Maps;
 import com.nuutrai.reactor.player.Claim;
-import com.nuutrai.reactor.store.Buyable;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import com.nuutrai.reactor.item.Buyable;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -39,15 +38,15 @@ public class Cell extends Sellable {
     private static Map<String, Cell> CELLS = Maps.newHashMap();
 
     public static Cell URANIUM = new Cell(
-            com.nuutrai.reactor.store.Cell.URANIUM,
+            com.nuutrai.reactor.item.Cell.URANIUM,
             Material.EMERALD_BLOCK);
 
     public static Cell URANIUM_DOUBLE = new Cell(
-            com.nuutrai.reactor.store.Cell.URANIUM_DOUBLE,
+            com.nuutrai.reactor.item.Cell.URANIUM_DOUBLE,
             Material.EMERALD_BLOCK
     );
     public static Cell URANIUM_QUAD = new Cell(
-            com.nuutrai.reactor.store.Cell.URANIUM_QUAD,
+            com.nuutrai.reactor.item.Cell.URANIUM_QUAD,
             Material.EMERALD_BLOCK
     );
 
