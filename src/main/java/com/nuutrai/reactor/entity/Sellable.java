@@ -4,6 +4,7 @@ import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.player.Claim;
 import com.nuutrai.reactor.player.ClaimHandler;
 import com.nuutrai.reactor.item.Buyable;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,28 +13,28 @@ import java.io.Serializable;
 
 public abstract class Sellable implements Serializable {
 
-    private Buyable type;
+    private final Buyable type;
     private Player player = null;
-    private Block position = null;
-    private Claim claim = null;
-    private Material block;
+    private Location position = null;
+//    private Claim claim = null;
+    private final Material block;
     private double currentHealth;
-    private double maxHealth;
+    private final double maxHealth;
 
-    public Sellable(Buyable type, Player player, Block position, Claim claim, Material block) {
+    public Sellable(Buyable type, Player player, Location position, Claim claim, Material block) {
         this.type = type;
         this.player = player;
         this.position = position;
-        this.claim = claim;
+//        this.claim = claim;
         this.block = block;
         this.maxHealth = type.getHealth();
     }
 
-    public Sellable(Buyable type, Player player, Block position, Material block) {
+    public Sellable(Buyable type, Player player, Location position, Material block) {
         this.type = type;
         this.player = player;
         this.position = position;
-        this.claim = DataManager.get(player).getClaim();
+//        this.claim = DataManager.get(player).getClaim();
         this.block = block;
         this.maxHealth = type.getHealth();
     }
@@ -74,8 +75,8 @@ public abstract class Sellable implements Serializable {
 
     public abstract void sell();
 
-    public static Sellable create(Sellable sellable, Player player, Block position) {
-        sellable.claim = ClaimHandler.getClaimOfPlayer(player);
+    public static Sellable create(Sellable sellable, Player player, Location position) {
+//        sellable.claim = ClaimHandler.getClaimOfPlayer(player);
         sellable.player = player;
         sellable.position = position;
 
@@ -90,11 +91,13 @@ public abstract class Sellable implements Serializable {
     }
 
     public void delete(boolean isDepleted) {
-        claim.entityHandler.remove(this);
+//        claim.entityHandler.remove(this);
         if (isDepleted) {
             // Do stuff for turning into *nothing*
         }
     }
+
+    public abstract Sellable clone();
 
     public boolean equals(Sellable s) {
         return this.type.getId().equals(s.getType().getId());

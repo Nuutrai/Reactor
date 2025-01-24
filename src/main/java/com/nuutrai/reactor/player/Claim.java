@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Claim implements Serializable {
 
     public EntityHandler entityHandler = new EntityHandler();
-    private UUID player;
+    private final UUID player;
     private Bound bound;
 
     public Claim(Player player, Bound bound) {

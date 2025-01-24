@@ -1,17 +1,25 @@
 package com.nuutrai.reactor.item;
 
+import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.data.DataManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 public abstract class Buyable {
 
-    private String id;
-    private int cost;
-    private String name;
-    private String description;
+    private final String id;
+    private final int cost;
+    private final String name;
+    private final String description;
     private double heat;
-    private Material item;
+    private final ItemStack item;
 
     /**
      *  Health represents both durability & heat content.
@@ -20,12 +28,30 @@ public abstract class Buyable {
     // Needed?
     //    private boolean isDurability;
 
-    public Buyable(String id, int cost, String name, String description, Material item) {
+    public Buyable(String id, int cost, String name, String description, ItemStack item) {
         this.id = id;
         this.cost = cost;
         this.name = name;
         this.description = description;
         this.item = item;
+    }
+
+    public Buyable(String id, int cost, String name, String description, NamedTextColor colour, Material item) {
+        ItemStack itemWithMeta = ItemStack.of(item);
+        ItemMeta meta = itemWithMeta.getItemMeta();
+        NamespacedKey key = new NamespacedKey(Reactor.instance, "reactor-id");
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
+
+        meta.displayName(Component.text(name, colour).decoration(TextDecoration.ITALIC, false));
+
+        itemWithMeta.setItemMeta(meta);
+
+        this.id = id;
+        this.cost = cost;
+        this.name = name;
+        this.description = description;
+        this.item = itemWithMeta;
+
     }
 
     public String getId() {
@@ -44,7 +70,7 @@ public abstract class Buyable {
         return heat;
     }
 
-    public Material getItem() {
+    public ItemStack getItem() {
         return item;
     }
 

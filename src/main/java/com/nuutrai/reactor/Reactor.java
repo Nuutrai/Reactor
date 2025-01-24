@@ -1,12 +1,11 @@
 package com.nuutrai.reactor;
 
 import com.nuutrai.reactor.commands.RegisterCommands;
-import com.nuutrai.reactor.listeners.PlayerJoin;
-import com.nuutrai.reactor.listeners.PlayerLeave;
-import com.nuutrai.reactor.listeners.PlayerPlaceBlock;
+import com.nuutrai.reactor.listeners.*;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,10 +24,11 @@ public final class Reactor extends JavaPlugin {
     public static boolean HALTTICK = false;
     public static Logger logger;
     public static File dataFolder;
-    public static NamespacedKey key;
+//    public static NamespacedKey key;
     @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
     public static LifecycleEventManager<Plugin> manager;
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -36,7 +36,6 @@ public final class Reactor extends JavaPlugin {
         instance = this;
         logger = this.getLogger();
         dataFolder = this.getDataFolder();
-        key = new NamespacedKey(this, "reactor-pdc");
         manager = Reactor.instance.getLifecycleManager();
 
         logger.info("Reactor startup initiated");
@@ -48,8 +47,18 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeave(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceBlock(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerInventoryClick(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
 
         RegisterCommands.loadInventoryTest();
+
+//        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+//            for (Player player: Bukkit.getServer().getOnlinePlayers()) {
+//                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+//                   player.entityHandler
+//                });
+//            }
+//        });
 
         logger.info("Reactor startup complete");
 

@@ -1,17 +1,20 @@
 package com.nuutrai.reactor.store;
 
+import com.google.common.collect.MultimapBuilder;
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.item.Cell;
 import com.nuutrai.reactor.item.Vent;
 import com.nuutrai.reactor.player.PlayerData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,17 +42,22 @@ public class Store {
        }
 
        ItemStack power = new ItemStack(Material.WIND_CHARGE);
-       power.getItemMeta().displayName(Component.text("Power", NamedTextColor.AQUA));
+       ItemMeta powerMeta = power.getItemMeta();
+       powerMeta.displayName(Component.text("Power", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
+       power.setItemMeta(powerMeta);
        items.add(power);
 
        PlayerData playerData = DataManager.get(player);
 
        logger.info(playerData.selection.toString());
 
-       items.add(playerData.selection);
+//       items.add(playerData.selection);
+       items.add(Cell.URANIUM.getItem());
 //       items.add(ItemStack.of(Material.BARRIER));
        ItemStack heat = new ItemStack(Material.BLAZE_POWDER);
-       heat.getItemMeta().displayName(Component.text("Heat", NamedTextColor.RED));
+       ItemMeta heatMeta = heat.getItemMeta();
+       heatMeta.displayName(Component.text("Heat", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
+       heat.setItemMeta(heatMeta);
        items.add(heat);
 
        for (int i = 0; i < 3; i++) {
@@ -62,7 +70,7 @@ public class Store {
 
        ItemStack cs1 = new ItemStack(Cell.URANIUM.getItem());
        ItemStack cs2 = new ItemStack(Cell.URANIUM_DOUBLE.getItem());
-       ItemStack cs3 = new ItemStack(Cell.URANIUM_DOUBLE.getItem());
+       ItemStack cs3 = new ItemStack(Cell.URANIUM_QUAD.getItem());
 
        items.add(cs1);
        items.add(cs2);
@@ -93,7 +101,7 @@ public class Store {
            pause = new ItemStack(Material.FIRE_CHARGE);
        }
 
-       pause.getItemMeta().displayName(Component.text("Pause", NamedTextColor.RED));
+       pause.getItemMeta().displayName(Component.text("Pause", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
        items.add(pause);
 
        return items;
@@ -101,7 +109,10 @@ public class Store {
 
    private static ItemStack getBackground() {
        ItemStack item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-       item.getItemMeta().setHideTooltip(true);
+       ItemMeta itemMeta = item.getItemMeta();
+       itemMeta.setHideTooltip(true);
+       itemMeta.setAttributeModifiers(MultimapBuilder.hashKeys().hashSetValues().build());
+       item.setItemMeta(itemMeta);
        return item;
    }
 

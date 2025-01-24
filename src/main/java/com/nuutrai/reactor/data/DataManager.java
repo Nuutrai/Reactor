@@ -7,7 +7,6 @@ import com.nuutrai.reactor.player.Claim;
 import com.nuutrai.reactor.player.ClaimHandler;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.player.PlayerDataWrapper;
-import org.apache.commons.lang3.SerializationUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -24,7 +22,7 @@ import static com.nuutrai.reactor.Reactor.logger;
 
 public class DataManager {
 
-    private static Map<Player, PlayerData> playerDataMap = Maps.newHashMap();
+    private static final Map<Player, PlayerData> playerDataMap = Maps.newHashMap();
 
 
     public static PlayerData get(Player player) {

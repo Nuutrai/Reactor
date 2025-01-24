@@ -9,7 +9,7 @@ public class PlayerDataWrapper {
 
     private int balance = 0;
     private Claim claim = null;
-    private UUID player;
+    private final UUID player;
     private int heat = 0;
     private int power = 0;
     private boolean isPaused = false;

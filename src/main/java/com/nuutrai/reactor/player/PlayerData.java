@@ -17,7 +17,7 @@ public class PlayerData implements Serializable {
     private int heat = 0;
     private int power = 0;
     public ItemStack selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
-    private boolean isPaused = false;
+    private final boolean isPaused = false;
 
     public PlayerData(Player player) {
         this.player = player.getUniqueId();

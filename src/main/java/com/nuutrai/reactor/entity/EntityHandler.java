@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public class EntityHandler implements Serializable {
 
-    private ArrayList<Sellable> entities = new ArrayList<>();
+    private final ArrayList<Sellable> entities = new ArrayList<>();
 
     public void add(Sellable entity) {
         entities.add(entity);

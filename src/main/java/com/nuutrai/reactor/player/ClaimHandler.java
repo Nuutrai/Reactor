@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ClaimHandler {
 
-    private static ArrayList<Claim> claims = new ArrayList<>();
+    private static final ArrayList<Claim> claims = new ArrayList<>();
 
     public static void add(Claim claim) {
         claims.add(claim);

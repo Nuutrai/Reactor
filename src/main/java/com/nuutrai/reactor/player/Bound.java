@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public class Bound {
 
-    private UUID owner;
-    private Vector min;
-    private Vector max;
+    private final UUID owner;
+    private final Vector min;
+    private final Vector max;
 
     public Bound(Player owner, Vector min, Vector max) {
         this.owner = owner.getUniqueId();
