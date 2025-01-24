@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * TODO:
  * <p>
- * Change Claim player handling to org.bukkit.entity.Player if it works
+ * Remove Claims
  */
 
 public final class Reactor extends JavaPlugin {
