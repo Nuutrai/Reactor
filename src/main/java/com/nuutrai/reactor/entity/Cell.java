@@ -2,14 +2,14 @@ package com.nuutrai.reactor.entity;
 
 import com.google.common.collect.Maps;
 import com.nuutrai.reactor.item.Buyable;
-import com.nuutrai.reactor.player.Claim;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import static com.nuutrai.reactor.Reactor.logger;
 
 public class Cell extends Sellable {
 
@@ -45,13 +45,13 @@ public class Cell extends Sellable {
         super(type, block);
     }
 
-    public static Cell getCell(String id) {
+    public static Cell get(String id) {
         return CELLS.get(id);
     }
 
     @Override
     public void tick() {
-
+        logger.info("Cell at " + this.getPosition().getBlockX() + ", " + this.getPosition().getBlockY() + ", " + this.getPosition().getBlockZ() + " was ticked");
     }
 
     @Override

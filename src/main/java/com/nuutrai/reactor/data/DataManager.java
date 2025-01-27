@@ -3,8 +3,6 @@ package com.nuutrai.reactor.data;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.nuutrai.reactor.Reactor;
-import com.nuutrai.reactor.player.Claim;
-import com.nuutrai.reactor.player.ClaimHandler;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.player.PlayerDataWrapper;
 import org.bukkit.Material;
@@ -33,22 +31,14 @@ public class DataManager {
 
         Gson gson = new Gson();
 
-        PlayerData playerData = gson.fromJson(readFromFile(player), PlayerData.class);
-        if (playerData.selection == null) {
-            playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
-        }
+        PlayerDataWrapper playerDataWrapper = gson.fromJson(readFromFile(player), PlayerDataWrapper.class);
+        PlayerData playerData = new PlayerData(playerDataWrapper);
+        playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         playerDataMap.put(player, playerData);
-        Claim claim = playerData.getClaim();
 
-        if (claim != null)
-            ClaimHandler.add(claim);
     }
 
     public static void unloadPlayerData(Player player) {
-        PlayerData playerData = playerDataMap.get(player);
-        Claim claim = playerData.getClaim();
-        if (claim != null)
-            ClaimHandler.remove(claim);
         savePlayerData(player);
     }
 

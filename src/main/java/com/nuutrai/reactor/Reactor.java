@@ -1,6 +1,7 @@
 package com.nuutrai.reactor;
 
 import com.nuutrai.reactor.commands.RegisterCommands;
+import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.listeners.*;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
@@ -51,6 +52,12 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
 
         RegisterCommands.loadInventoryTest();
+
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            for (Player p: getServer().getOnlinePlayers()) {
+                DataManager.get(p).tick();
+            }
+        }, 5000, 5000);
 
 //        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
 //            for (Player player: Bukkit.getServer().getOnlinePlayers()) {

@@ -2,6 +2,7 @@ package com.nuutrai.reactor.listeners;
 
 import com.google.common.collect.Maps;
 import com.nuutrai.reactor.Reactor;
+import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.entity.Cell;
 import com.nuutrai.reactor.util.FaceToDirection;
 import org.bukkit.Bukkit;
@@ -15,16 +16,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Vector;
-import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.HashMap;
-
-import static com.nuutrai.reactor.Reactor.logger;
 
 public class PlayerPlaceEntity implements Listener {
 
@@ -73,9 +68,11 @@ public class PlayerPlaceEntity implements Listener {
 
     public static void place(String id, Player p, Location location) {
 //        Cell cell = Cell.getCell(id).clone();
-        Cell copy = Cell.getCell(id);
-        Cell cell = new Cell(copy.getType(), p, location, copy.getBlock());
-        location.getBlock().setType(Material.IRON_BLOCK);
+        Cell copy = Cell.get(id);
+        Material block = copy.getBlock();
+        Cell cell = new Cell(copy.getType(), p, location, block);
+        location.getBlock().setType(block);
+        DataManager.get(p).addEntity(cell, location);
     }
 
 }
