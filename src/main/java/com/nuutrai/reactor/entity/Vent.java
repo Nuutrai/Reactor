@@ -18,7 +18,6 @@ public class Vent extends Sellable {
             com.nuutrai.reactor.item.Vent.ADVANCED,
             Material.IRON_BLOCK
     );
-    private static final Map<String, Vent> VENTS = Maps.newHashMap();
 
     static {
         ArrayList<Vent> vents = new ArrayList<>();
@@ -26,7 +25,7 @@ public class Vent extends Sellable {
         vents.add(ADVANCED);
 
         for (Vent vent : vents) {
-            VENTS.put(vent.getType().getId(), vent);
+            SELLABLES.put(vent.getType().getId(), vent);
         }
     }
 
@@ -36,10 +35,6 @@ public class Vent extends Sellable {
 
     public Vent(Buyable type, Material block) {
         super(type, block);
-    }
-
-    public static Vent get(String id) {
-        return VENTS.get(id);
     }
 
     @Override

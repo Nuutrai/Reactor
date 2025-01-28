@@ -4,7 +4,9 @@ import com.google.common.collect.Maps;
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.entity.Cell;
+import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.util.FaceToDirection;
+import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,17 +64,18 @@ public class PlayerPlaceEntity implements Listener {
         }, timeToPurge);
         // End
 
-        Location newLoc = block.getLocation().add(FaceToDirection.get(e.getBlockFace()));
+        VecLoc newLoc = new VecLoc(block.getLocation().add(FaceToDirection.get(e.getBlockFace())), p.getUniqueId());
         place(id, p, newLoc);
     }
 
-    public static void place(String id, Player p, Location location) {
+    public static void place(String id, Player p, VecLoc vecLoc) {
 //        Cell cell = Cell.getCell(id).clone();
-        Cell copy = Cell.get(id);
+        Sellable copy = Sellable.get(id);
         Material block = copy.getBlock();
-        Cell cell = new Cell(copy.getType(), p, location, block);
+        Sellable entity = copy.clone();
+        Location location = vecLoc.toLocation();
         location.getBlock().setType(block);
-        DataManager.get(p).addEntity(cell, location);
+        DataManager.get(p).addEntity(entity, vecLoc);
     }
 
 }

@@ -1,7 +1,10 @@
 package com.nuutrai.reactor.data;
 
 import com.google.common.collect.Maps;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.player.PlayerDataWrapper;
@@ -29,9 +32,24 @@ public class DataManager {
 
     public static void loadPlayerData(Player player) {
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .addDeserializationExclusionStrategy(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        logger.info(f.getName());
+                        return f.getName().equals("referent"); // Skip the problematic field
+                    }
 
-        PlayerDataWrapper playerDataWrapper = gson.fromJson(readFromFile(player), PlayerDataWrapper.class);
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false; // No classes skipped
+                    }
+                })
+                .create();
+
+
+        String json = readFromFile(player);
+        PlayerDataWrapper playerDataWrapper = gson.fromJson(json, PlayerDataWrapper.class);
         PlayerData playerData = new PlayerData(playerDataWrapper);
         playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         playerDataMap.put(player, playerData);
@@ -95,7 +113,7 @@ public class DataManager {
 
     private static void initData(Player player) {
 
-        PlayerData playerData = new PlayerData(player);
+        PlayerData playerData = new PlayerData();
         playerDataMap.put(player, playerData);
 
         try {

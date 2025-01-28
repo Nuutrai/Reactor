@@ -1,25 +1,30 @@
 package com.nuutrai.reactor.entity;
 
+import com.google.common.collect.Maps;
 import com.nuutrai.reactor.item.Buyable;
+import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.UUID;
 
 public abstract class Sellable implements Serializable {
 
     private final Buyable type;
     private final Material block;
     private final double maxHealth;
-    private Player player = null;
-    private Location position = null;
+    private UUID player = null;
+    private VecLoc position = null;
     private double currentHealth;
+    public static final Map<String, Sellable> SELLABLES = Maps.newHashMap();
 
     public Sellable(Buyable type, Player player, Location position, Material block) {
         this.type = type;
-        this.player = player;
-        this.position = position;
+        this.player = player.getUniqueId();
+        this.position = new VecLoc(position, player.getUniqueId());
         this.block = block;
         this.maxHealth = type.getHealth();
     }
@@ -35,12 +40,16 @@ public abstract class Sellable implements Serializable {
     }
 
     public static Sellable create(Sellable sellable, Player player, Location position) {
-        sellable.player = player;
-        sellable.position = position;
+        sellable.player = player.getUniqueId();
+        sellable.position = new VecLoc(position, player.getUniqueId());
 
         // Make block at position
 
         return sellable;
+    }
+
+    public static Sellable get(String id) {
+        return SELLABLES.get(id);
     }
 
     public Buyable getType() {
@@ -51,7 +60,7 @@ public abstract class Sellable implements Serializable {
         return block;
     }
 
-    public Location getPosition() {
+    public VecLoc getPosition() {
         return this.position;
     }
 
@@ -89,4 +98,15 @@ public abstract class Sellable implements Serializable {
         return this.type.getId().equals(s.getType().getId());
     }
 
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public UUID getPlayer() {
+        return player;
+    }
+
+    public double getCurrentHealth() {
+        return currentHealth;
+    }
 }

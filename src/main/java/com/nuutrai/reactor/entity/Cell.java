@@ -24,7 +24,6 @@ public class Cell extends Sellable {
             com.nuutrai.reactor.item.Cell.URANIUM_QUAD,
             Material.EMERALD_BLOCK
     );
-    private static final Map<String, Cell> CELLS = Maps.newHashMap();
 
     static {
         ArrayList<Cell> cells = new ArrayList<>();
@@ -33,7 +32,7 @@ public class Cell extends Sellable {
         cells.add(URANIUM_QUAD);
 
         for (Cell cell : cells) {
-            CELLS.put(cell.getType().getId(), cell);
+            SELLABLES.put(cell.getType().getId(), cell);
         }
     }
 
@@ -45,13 +44,9 @@ public class Cell extends Sellable {
         super(type, block);
     }
 
-    public static Cell get(String id) {
-        return CELLS.get(id);
-    }
-
     @Override
     public void tick() {
-        logger.info("Cell at " + this.getPosition().getBlockX() + ", " + this.getPosition().getBlockY() + ", " + this.getPosition().getBlockZ() + " was ticked");
+        logger.info("Cell at " + this.getPosition().toLocation().getBlockX() + ", " + this.getPosition().toLocation().getBlockY() + ", " + this.getPosition().toLocation().getBlockZ() + " was ticked");
     }
 
     @Override

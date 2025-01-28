@@ -1,6 +1,7 @@
 package com.nuutrai.reactor.player;
 
 import com.nuutrai.reactor.entity.Sellable;
+import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 
 import java.io.Serializable;
@@ -11,16 +12,14 @@ import java.util.UUID;
 public class PlayerDataWrapper implements Serializable {
 
     private int balance = 0;
-    private HashMap<Location, Sellable> entities;
-    private ArrayList<Location> locations;
-    private UUID player;
+    private HashMap<VecLoc, Sellable> entities;
+    private ArrayList<VecLoc> locations;
     private int heat = 0;
     private int power = 0;
     private boolean isPaused = false;
 
     public PlayerDataWrapper(PlayerData pd) {
         this.balance = pd.getBalance();
-        this.player = pd.getPlayer();
         this.heat = pd.getHeat();
         this.power = pd.getPower();
         this.isPaused = pd.isPaused();
@@ -32,10 +31,6 @@ public class PlayerDataWrapper implements Serializable {
         return balance;
     }
 
-    public UUID getPlayer() {
-        return player;
-    }
-
     public int getHeat() {
         return heat;
     }
@@ -44,11 +39,11 @@ public class PlayerDataWrapper implements Serializable {
         return isPaused;
     }
 
-    public HashMap<Location, Sellable> getEntities() {
+    public HashMap<VecLoc, Sellable> getEntities() {
         return entities;
     }
 
-    public ArrayList<Location> getLocations() {
+    public ArrayList<VecLoc> getLocations() {
         return locations;
     }
 

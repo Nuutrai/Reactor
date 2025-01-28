@@ -3,6 +3,7 @@ package com.nuutrai.reactor;
 import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.listeners.*;
+import com.nuutrai.reactor.player.PlayerData;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -25,7 +26,6 @@ public final class Reactor extends JavaPlugin {
     public static boolean HALTTICK = false;
     public static Logger logger;
     public static File dataFolder;
-//    public static NamespacedKey key;
     @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
     public static LifecycleEventManager<Plugin> manager;
 
@@ -54,10 +54,13 @@ public final class Reactor extends JavaPlugin {
         RegisterCommands.loadInventoryTest();
 
         Bukkit.getScheduler().runTaskTimer(this, () -> {
+            logger.info("Tick!");
             for (Player p: getServer().getOnlinePlayers()) {
+                PlayerData pd = DataManager.get(p);
+
                 DataManager.get(p).tick();
             }
-        }, 5000, 5000);
+        }, 60, 60);
 
 //        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
 //            for (Player player: Bukkit.getServer().getOnlinePlayers()) {

@@ -2,6 +2,7 @@ package com.nuutrai.reactor.player;
 
 import com.nuutrai.reactor.entity.EntityHandler;
 import com.nuutrai.reactor.entity.Sellable;
+import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,23 +15,20 @@ public class PlayerData implements Serializable {
 
     private int balance = 0;
     private EntityHandler entities = new EntityHandler();
-    private UUID player;
     private int heat = 0;
     private int power = 0;
     public  ItemStack selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
     private boolean isPaused = false;
 
-    public PlayerData(Player player) {
-        this.player = player.getUniqueId();
+    public PlayerData() {
     }
 
     public PlayerData(PlayerDataWrapper playerDataWrapper) {
         this.balance = playerDataWrapper.getBalance();
-        this.player = playerDataWrapper.getPlayer();
         this.heat = playerDataWrapper.getHeat();
         this.power = playerDataWrapper.getPower();
         this.isPaused = playerDataWrapper.isPaused();
-        for (Location loc: playerDataWrapper.getLocations()) {
+        for (VecLoc loc: playerDataWrapper.getLocations()) {
             Sellable s = playerDataWrapper.getEntities().get(loc);
             this.entities.add(s, loc);
         }
@@ -44,20 +42,12 @@ public class PlayerData implements Serializable {
         this.balance = balance;
     }
 
-    public void addEntity(Sellable s, Location location) {
+    public void addEntity(Sellable s, VecLoc location) {
         entities.add(s, location);
     }
 
-    public void removeEntity(Location location) {
+    public void removeEntity(VecLoc location) {
         entities.remove(location);
-    }
-
-    public UUID getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player.getUniqueId();
     }
 
     public int getPower() {
@@ -90,11 +80,6 @@ public class PlayerData implements Serializable {
 
     public void tick() {
         entities.tick();
-    }
-
-    @Override
-    public String toString() {
-        return this.player + ".json";
     }
 
     public boolean isPaused() {

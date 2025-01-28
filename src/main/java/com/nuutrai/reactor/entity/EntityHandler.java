@@ -1,6 +1,7 @@
 package com.nuutrai.reactor.entity;
 
 import com.google.common.collect.Maps;
+import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 
 import java.io.Serializable;
@@ -9,33 +10,33 @@ import java.util.HashMap;
 
 public class EntityHandler implements Serializable {
 
-    private final HashMap<Location, Sellable> entityMap = Maps.newHashMap();
-    private final ArrayList<Location> locations = new ArrayList<>();
+    private final HashMap<VecLoc, Sellable> entityMap = Maps.newHashMap();
+    private final ArrayList<VecLoc> locations = new ArrayList<>();
 
-    public void add(Sellable entity, Location location) {
+    public void add(Sellable entity, VecLoc location) {
         entityMap.put(location, entity);
         locations.add(location);
     }
 
-    public void remove(Location location) {
+    public void remove(VecLoc location) {
         entityMap.remove(location);
         locations.remove(location);
     }
 
-    public Sellable getSellable(Location loc) {
+    public Sellable getSellable(VecLoc loc) {
         return entityMap.get(loc);
     }
 
-    public HashMap<Location, Sellable> getEntityMap() {
+    public HashMap<VecLoc, Sellable> getEntityMap() {
         return entityMap;
     }
 
-    public ArrayList<Location> getLocations() {
+    public ArrayList<VecLoc> getLocations() {
         return locations;
     }
 
     public void tick() {
-        for (Location location: locations) {
+        for (VecLoc location: locations) {
             entityMap.get(location).tick();
         }
     }
