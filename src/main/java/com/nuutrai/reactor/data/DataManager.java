@@ -51,6 +51,7 @@ public class DataManager {
         String json = readFromFile(player);
         PlayerDataWrapper playerDataWrapper = gson.fromJson(json, PlayerDataWrapper.class);
         PlayerData playerData = new PlayerData(playerDataWrapper);
+        playerData.setPlayer(player);
         playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         playerDataMap.put(player, playerData);
 
