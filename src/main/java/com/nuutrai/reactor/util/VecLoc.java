@@ -52,6 +52,6 @@ public class VecLoc {
     }
 
     public static World getWorld(UUID world) {
-        return Bukkit.getWorld(world);
+        return Bukkit.getWorld(world.toString());
     }
 }
