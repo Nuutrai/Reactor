@@ -128,6 +128,7 @@ public class DataManager {
     private static void initData(Player player) {
 
         PlayerData playerData = new PlayerData();
+        playerData.setPlayer(player);
         playerDataMap.put(player, playerData);
 
         try {
