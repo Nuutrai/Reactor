@@ -2,7 +2,7 @@ package com.nuutrai.reactor.entity;
 
 import com.google.common.collect.Maps;
 import com.nuutrai.reactor.util.VecLoc;
-import org.bukkit.Location;
+import org.bukkit.Material;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +21,17 @@ public class EntityHandler implements Serializable {
     public void remove(VecLoc location) {
         entityMap.remove(location);
         locations.remove(location);
+    }
+
+    public void place() {
+        for (VecLoc loc: getLocations()) {
+            place(loc);
+        }
+    }
+
+    public void place(VecLoc loc) {
+        Material block = entityMap.get(loc).getBlock();
+        loc.toLocation().getBlock().setType(block);
     }
 
     public Sellable getSellable(VecLoc loc) {

@@ -4,12 +4,16 @@ import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.listeners.*;
 import com.nuutrai.reactor.player.PlayerData;
+import com.nuutrai.reactor.world.WorldManager;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -62,6 +66,8 @@ public final class Reactor extends JavaPlugin {
             }
         }, 60, 60);
 
+        WorldManager.purge();
+
 //        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
 //            for (Player player: Bukkit.getServer().getOnlinePlayers()) {
 //                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -76,7 +82,14 @@ public final class Reactor extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
+        WorldManager.purge();
+
+    }
+
+    @Override
+    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+        return super.getDefaultWorldGenerator(worldName, id);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

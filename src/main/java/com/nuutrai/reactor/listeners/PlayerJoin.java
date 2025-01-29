@@ -2,6 +2,9 @@ package com.nuutrai.reactor.listeners;
 
 import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.store.Store;
+import com.nuutrai.reactor.world.WorldManager;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,9 +19,11 @@ public class PlayerJoin implements Listener {
 
         Player p = e.getPlayer();
 
-        p.setAllowFlight(true);
-
         Store.setup(p);
+        World world = WorldManager.createWorld(p);
+        p.teleport(new Location(world, 0, 121, 0));
+
+        p.setAllowFlight(true);
 
         if (p.getName().equals("Nuutrai")) {
 //            Claim claim = new Claim(p);
