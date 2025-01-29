@@ -11,6 +11,12 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * TODO:
+ * <p>
+ * Setup ids when possible
+ */
+
 public abstract class Sellable implements Serializable {
 
     private final Buyable type;

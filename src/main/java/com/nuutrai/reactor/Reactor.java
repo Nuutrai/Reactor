@@ -21,7 +21,17 @@ import java.util.logging.Logger;
 /**
  * TODO:
  * <p>
- * Remove Claims
+ * Add Raytracing
+ * <p>
+ * Add breaking cells and others
+ * <p>
+ * Make everything work like..
+ * <p>
+ * Use FireFlow method of Cell/Vents (Because this (L70) shit is annoying)
+ * <p>
+ * Asynchronous entity ticking (REMEMBER NO BUKKIT API IN ASYNC)
+ * <p>
+ * Look into making more items
  */
 
 public final class Reactor extends JavaPlugin {
