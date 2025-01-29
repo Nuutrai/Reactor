@@ -23,6 +23,8 @@ import org.bukkit.persistence.PersistentDataType;
 import java.time.Instant;
 import java.util.HashMap;
 
+import static com.nuutrai.reactor.Reactor.logger;
+
 /**
  * TODO:
  * <p>
@@ -49,8 +51,11 @@ public class PlayerPlaceEntity implements Listener {
         if (id == null || id.isEmpty())
             return;
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            if (e.getClickedBlock().getType() != null)
+                logger.info(e.getClickedBlock().getType().name());
             return;
+        }
         Block block = e.getClickedBlock();
         if (block == null)
             return;
@@ -78,9 +83,15 @@ public class PlayerPlaceEntity implements Listener {
 
     public static void place(String id, Player p, VecLoc vecLoc) {
 //        Cell cell = Cell.getCell(id).clone();
+
+        PlayerData pd = DataManager.get(p);
+
+        logger.info("" + pd.getBalance());
+
         Sellable copy = Sellable.get(id);
         Material block = copy.getBlock();
         Sellable entity = copy.clone();
+        logger.info("" + entity.getType().getCost());
         Location location = vecLoc.toLocation();
         location.getBlock().setType(block);
         DataManager.get(p).addEntity(entity, vecLoc);

@@ -37,12 +37,12 @@ public class DataManager {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {
                         logger.info(f.getName());
-                        return f.getName().equals("referent"); // Skip the problematic field
+                        return f.getName().equals("referent");
                     }
 
                     @Override
                     public boolean shouldSkipClass(Class<?> clazz) {
-                        return false; // No classes skipped
+                        return false;
                     }
                 })
                 .create();
@@ -64,7 +64,20 @@ public class DataManager {
     public static void savePlayerData(Player player) {
         PlayerData playerData = playerDataMap.get(player);
         PlayerDataWrapper playerDataWrapper = new PlayerDataWrapper(playerData);
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .addDeserializationExclusionStrategy(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        logger.info(f.getName());
+                        return f.getName().equals("value"); // Skip the problematic field
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false; // No classes skipped
+                    }
+                })
+                .create();
         String json = gson.toJson(playerDataWrapper);
         writeToFile(player, json);
     }
