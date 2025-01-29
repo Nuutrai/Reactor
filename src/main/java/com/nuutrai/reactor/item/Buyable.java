@@ -1,7 +1,9 @@
 package com.nuutrai.reactor.item;
 
+import com.google.common.collect.Maps;
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.data.DataManager;
+import com.nuutrai.reactor.entity.Sellable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -11,6 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.HashSet;
+import java.util.Map;
 
 public abstract class Buyable {
 
@@ -27,6 +32,8 @@ public abstract class Buyable {
     private double health;
     // Needed?
     //    private boolean isDurability;
+
+    private static final Map<String, Buyable> BUYABLES = Maps.newHashMap();
 
     public Buyable(String id, int cost, String name, String description, ItemStack item) {
         this.id = id;
@@ -52,6 +59,14 @@ public abstract class Buyable {
         this.description = description;
         this.item = itemWithMeta;
 
+    }
+
+    public static Buyable get(String id) {
+        return BUYABLES.get(id);
+    }
+
+    public static void add(Buyable b) {
+        BUYABLES.put(b.getId(), b);
     }
 
     public String getId() {
@@ -81,8 +96,8 @@ public abstract class Buyable {
     }
 
 
-    public boolean equals(Buyable s) {
-        return this.id.equals(s.id);
+    public boolean equals(Buyable b) {
+        return this.id.equals(b.id);
     }
 
 }

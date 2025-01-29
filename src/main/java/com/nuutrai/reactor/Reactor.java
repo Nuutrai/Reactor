@@ -2,12 +2,14 @@ package com.nuutrai.reactor;
 
 import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.data.DataManager;
+import com.nuutrai.reactor.entity.Cell;
+import com.nuutrai.reactor.entity.Sellable;
+import com.nuutrai.reactor.entity.Vent;
 import com.nuutrai.reactor.listeners.*;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.world.WorldManager;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -66,6 +68,12 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceBlock(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryClick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
+
+        Sellable.addSellable(Cell.URANIUM);
+        Sellable.addSellable(Cell.URANIUM_DOUBLE);
+        Sellable.addSellable(Cell.URANIUM_QUAD);
+        Sellable.addSellable(Vent.BASIC);
+        Sellable.addSellable(Vent.ADVANCED);
 
         RegisterCommands.loadInventoryTest();
 

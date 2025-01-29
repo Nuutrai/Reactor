@@ -79,8 +79,30 @@ public class PlayerData implements Serializable {
         isPaused = pause;
     }
 
+    public void loadAllEntities() {
+        entities.place();
+    }
+
+    public void loadEntity(VecLoc loc) {
+        entities.place(loc);
+    }
+
+    public void loadEntity(Location loc) {
+        loadEntity(new VecLoc(loc, player.getUniqueId()));
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public void tick() {
-        entities.tick();
+        if (!isPaused()) {
+            entities.tick();
+        }
     }
 
     public boolean isPaused() {

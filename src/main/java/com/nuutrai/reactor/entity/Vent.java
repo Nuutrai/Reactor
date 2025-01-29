@@ -1,13 +1,9 @@
 package com.nuutrai.reactor.entity;
 
-import com.google.common.collect.Maps;
 import com.nuutrai.reactor.item.Buyable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 public class Vent extends Sellable {
 
@@ -19,15 +15,15 @@ public class Vent extends Sellable {
             Material.IRON_BLOCK
     );
 
-    static {
-        ArrayList<Vent> vents = new ArrayList<>();
-        vents.add(BASIC);
-        vents.add(ADVANCED);
-
-        for (Vent vent : vents) {
-            SELLABLES.put(vent.getType().getId(), vent);
-        }
-    }
+//    static {
+//        ArrayList<Vent> vents = new ArrayList<>();
+//        vents.add(BASIC);
+//        vents.add(ADVANCED);
+//
+//        for (Vent vent : vents) {
+//            SELLABLES.put(vent.getType().getId(), vent);
+//        }
+//    }
 
     public Vent(Buyable type, Player player, Location position, Material block) {
         super(type, player, position, block);

@@ -1,13 +1,9 @@
 package com.nuutrai.reactor.entity;
 
-import com.google.common.collect.Maps;
 import com.nuutrai.reactor.item.Buyable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
@@ -24,17 +20,6 @@ public class Cell extends Sellable {
             com.nuutrai.reactor.item.Cell.URANIUM_QUAD,
             Material.EMERALD_BLOCK
     );
-
-    static {
-        ArrayList<Cell> cells = new ArrayList<>();
-        cells.add(URANIUM);
-        cells.add(URANIUM_DOUBLE);
-        cells.add(URANIUM_QUAD);
-
-        for (Cell cell : cells) {
-            SELLABLES.put(cell.getType().getId(), cell);
-        }
-    }
 
     public Cell(Buyable type, Player player, Location position, Material block) {
         super(type, player, position, block);

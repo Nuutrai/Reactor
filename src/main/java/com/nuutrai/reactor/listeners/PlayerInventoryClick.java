@@ -35,6 +35,8 @@ public class PlayerInventoryClick implements Listener {
             return;
         }
 
+        player.getInventory().setItem(4, item);
+
         logger.info(id);
     }
 

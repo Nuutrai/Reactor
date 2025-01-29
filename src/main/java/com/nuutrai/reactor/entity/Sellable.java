@@ -19,26 +19,26 @@ import java.util.UUID;
 
 public abstract class Sellable implements Serializable {
 
-    private final Buyable type;
+    private final String id;
     private final Material block;
     private final double maxHealth;
     private UUID player = null;
     private VecLoc position = null;
     private double currentHealth;
-    public static final Map<String, Sellable> SELLABLES = Maps.newHashMap();
+    private static final Map<String, Sellable> SELLABLES = Maps.newHashMap();
 
-    public Sellable(Buyable type, Player player, Location position, Material block) {
-        this.type = type;
+    public Sellable(String id, Material block, Player player, Location position) {
+        this.id = id;
         this.player = player.getUniqueId();
         this.position = new VecLoc(position, player.getUniqueId());
         this.block = block;
-        this.maxHealth = type.getHealth();
+        this.maxHealth = getType().getHealth();
     }
 
-    public Sellable(Buyable type, Material block) {
-        this.type = type;
+    public Sellable(String id, Material block) {
+        this.id = id;
         this.block = block;
-        this.maxHealth = type.getHealth();
+        this.maxHealth = getType().getHealth();
     }
 
     public static void create(Sellable s) {
@@ -58,8 +58,16 @@ public abstract class Sellable implements Serializable {
         return SELLABLES.get(id);
     }
 
+    public static void add(Sellable s) {
+        SELLABLES.put(s.getType().getId(), s);
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public Buyable getType() {
-        return type;
+        return Buyable.get(id);
     }
 
     public Material getBlock() {
@@ -71,15 +79,15 @@ public abstract class Sellable implements Serializable {
     }
 
     private double getHeat() {
-        return type.getHeat();
+        return getType().getHeat();
     }
 
     private double getHealth() {
-        return type.getHealth();
+        return getType().getHealth();
     }
 
     protected float getHeatToCostRatio() {
-        return (float) (getHeat() / type.getCost());
+        return (float) (getHeat() / getType().getCost());
     }
 
     public abstract void tick();
@@ -101,7 +109,7 @@ public abstract class Sellable implements Serializable {
     public abstract Sellable clone();
 
     public boolean equals(Sellable s) {
-        return this.type.getId().equals(s.getType().getId());
+        return id.equals(s.getId());
     }
 
     public double getMaxHealth() {
