@@ -9,13 +9,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -52,7 +49,7 @@ public class Store {
        logger.info(playerData.selection.toString());
 
 //       items.add(playerData.selection);
-       items.add(Cell.URANIUM.getItem());
+       items.add(ItemStack.of(Material.AIR));
 //       items.add(ItemStack.of(Material.BARRIER));
        ItemStack heat = new ItemStack(Material.BLAZE_POWDER);
        ItemMeta heatMeta = heat.getItemMeta();
