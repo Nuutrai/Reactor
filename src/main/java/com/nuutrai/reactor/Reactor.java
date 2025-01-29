@@ -31,6 +31,8 @@ import java.util.logging.Logger;
  * <p>
  * Asynchronous entity ticking (REMEMBER NO BUKKIT API IN ASYNC)
  * <p>
+ * Add list of all current entities (map with VecLoc) for easy player lookup
+ * <p>
  * Look into making more items
  */
 
