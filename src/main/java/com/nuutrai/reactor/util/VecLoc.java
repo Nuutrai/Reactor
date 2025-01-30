@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.nuutrai.reactor.Reactor.logger;
@@ -53,5 +54,21 @@ public class VecLoc {
 
     public static World getWorld(UUID world) {
         return Bukkit.getWorld(world.toString());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        VecLoc vecLoc = (VecLoc) object;
+        return x == vecLoc.x && y == vecLoc.y && z == vecLoc.z && Objects.equals(world, vecLoc.world);
+    }
+
+    public String getId() {
+        return String.valueOf(hashCode());
+    }
+
+    public int hashCode() {
+        return Objects.hash(x, y, z, world);
     }
 }

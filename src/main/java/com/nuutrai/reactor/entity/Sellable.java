@@ -1,6 +1,7 @@
 package com.nuutrai.reactor.entity;
 
 import com.google.common.collect.Maps;
+import com.google.gson.*;
 import com.nuutrai.reactor.item.Buyable;
 import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
@@ -8,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ import java.util.UUID;
  * Setup ids when possible
  */
 
-public abstract class Sellable implements Serializable {
+public abstract class Sellable implements JsonSerializer<Sellable>, JsonDeserializer<Sellable> {
 
     private final String id;
     private final Material block;
@@ -123,4 +125,13 @@ public abstract class Sellable implements Serializable {
     public double getCurrentHealth() {
         return currentHealth;
     }
+
+    @Override
+    public Sellable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+
+        json.
+
+        return null;
+    }
+
 }

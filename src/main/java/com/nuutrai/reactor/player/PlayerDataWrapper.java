@@ -1,10 +1,12 @@
 package com.nuutrai.reactor.player;
 
 import com.nuutrai.reactor.entity.Sellable;
+import com.nuutrai.reactor.entity.impl.cell.UraniumCellEntity;
 import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 
 import java.io.Serializable;
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -12,7 +14,7 @@ import java.util.UUID;
 public class PlayerDataWrapper implements Serializable {
 
     private int balance = 0;
-    private HashMap<VecLoc, Sellable> entities;
+    private HashMap<String, Sellable> entities;
     private ArrayList<VecLoc> locations;
     private int heat = 0;
     private int power = 0;
@@ -39,7 +41,7 @@ public class PlayerDataWrapper implements Serializable {
         return isPaused;
     }
 
-    public HashMap<VecLoc, Sellable> getEntities() {
+    public HashMap<String, Sellable> getEntities() {
         return entities;
     }
 

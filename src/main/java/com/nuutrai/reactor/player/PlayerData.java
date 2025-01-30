@@ -30,7 +30,7 @@ public class PlayerData implements Serializable {
         this.power = playerDataWrapper.getPower();
         this.isPaused = playerDataWrapper.isPaused();
         for (VecLoc loc: playerDataWrapper.getLocations()) {
-            Sellable s = playerDataWrapper.getEntities().get(loc);
+            Sellable s = playerDataWrapper.getEntities().get(loc.hashCode());
             this.entities.add(s, loc);
         }
     }

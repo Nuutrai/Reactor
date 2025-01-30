@@ -2,8 +2,7 @@ package com.nuutrai.reactor.store;
 
 import com.google.common.collect.MultimapBuilder;
 import com.nuutrai.reactor.data.DataManager;
-import com.nuutrai.reactor.item.Cell;
-import com.nuutrai.reactor.item.Vent;
+import com.nuutrai.reactor.item.Buyable;
 import com.nuutrai.reactor.player.PlayerData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -65,9 +64,9 @@ public class Store {
          Type-s-Stage
         */
 
-       ItemStack cs1 = new ItemStack(Cell.URANIUM.getItem());
-       ItemStack cs2 = new ItemStack(Cell.URANIUM_DOUBLE.getItem());
-       ItemStack cs3 = new ItemStack(Cell.URANIUM_QUAD.getItem());
+       ItemStack cs1 = new ItemStack(Buyable.get("uranium_single").getItem());
+       ItemStack cs2 = new ItemStack(Buyable.get("uranium_double").getItem());
+       ItemStack cs3 = new ItemStack(Buyable.get("uranium_quad").getItem());
 
        items.add(cs1);
        items.add(cs2);
@@ -77,8 +76,8 @@ public class Store {
            items.add(getBackground());
        }
 
-       ItemStack vs1 = new ItemStack(Vent.BASIC.getItem());
-       ItemStack vs2 = new ItemStack(Vent.ADVANCED.getItem());
+       ItemStack vs1 = new ItemStack(Buyable.get("basic_vent").getItem());
+       ItemStack vs2 = new ItemStack(Buyable.get("advanced_vent").getItem());
 
        items.add(vs1);
        items.add(vs2);

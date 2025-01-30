@@ -2,9 +2,12 @@ package com.nuutrai.reactor;
 
 import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.data.DataManager;
-import com.nuutrai.reactor.entity.Cell;
 import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.entity.Vent;
+import com.nuutrai.reactor.entity.impl.cell.*;
+import com.nuutrai.reactor.entity.impl.vent.*;
+import com.nuutrai.reactor.item.Buyable;
+import com.nuutrai.reactor.item.impl.cell.*;
+import com.nuutrai.reactor.item.impl.vent.*;
 import com.nuutrai.reactor.listeners.*;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.world.WorldManager;
@@ -23,13 +26,11 @@ import java.util.logging.Logger;
 /**
  * TODO:
  * <p>
- * Add Raytracing
- * <p>
  * Add breaking cells and others
  * <p>
  * Make everything work like..
  * <p>
- * Use FireFlow method of Cell/Vents (Because this (L70) shit is annoying)
+ * Add Raytracing
  * <p>
  * Asynchronous entity ticking (REMEMBER NO BUKKIT API IN ASYNC)
  * <p>
@@ -69,11 +70,25 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryClick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
 
-        Sellable.addSellable(Cell.URANIUM);
-        Sellable.addSellable(Cell.URANIUM_DOUBLE);
-        Sellable.addSellable(Cell.URANIUM_QUAD);
-        Sellable.addSellable(Vent.BASIC);
-        Sellable.addSellable(Vent.ADVANCED);
+        /* Buyables */
+
+        Buyable.add(new AdvancedVentItem());
+        Buyable.add(new BasicVentItem());
+
+        Buyable.add(new DoubleUraniumCellItem());
+        Buyable.add(new QuadUraniumCellItem());
+        Buyable.add(new UraniumCellItem());
+
+        /* Sellables */
+
+        Sellable.add(new AdvancedVentEntity());
+        Sellable.add(new BasicVentEntity());
+
+        Sellable.add(new DoubleUraniumCellEntity());
+        Sellable.add(new QuadUraniumCellEntity());
+        Sellable.add(new UraniumCellEntity());
+
+        /*          */
 
         RegisterCommands.loadInventoryTest();
 
