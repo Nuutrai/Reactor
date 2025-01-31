@@ -48,8 +48,12 @@ public abstract class Sellable implements JsonSerializer<Sellable>, JsonDeserial
     }
 
     public static Sellable create(Sellable sellable, Player player, Location position) {
-        sellable.player = player.getUniqueId();
-        sellable.position = new VecLoc(position, player.getUniqueId());
+        return create(sellable, player.getUniqueId(), position);
+    }
+
+    public static Sellable create(Sellable sellable, UUID uuid, Location position) {
+        sellable.player = uuid;
+        sellable.position = new VecLoc(position, uuid);
 
         // Make block at position
 
@@ -78,6 +82,10 @@ public abstract class Sellable implements JsonSerializer<Sellable>, JsonDeserial
 
     public VecLoc getPosition() {
         return this.position;
+    }
+
+    public void setCurrentHealth(double currentHealth) {
+        this.currentHealth = currentHealth;
     }
 
     private double getHeat() {
@@ -124,14 +132,6 @@ public abstract class Sellable implements JsonSerializer<Sellable>, JsonDeserial
 
     public double getCurrentHealth() {
         return currentHealth;
-    }
-
-    @Override
-    public Sellable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
-        json.
-
-        return null;
     }
 
 }

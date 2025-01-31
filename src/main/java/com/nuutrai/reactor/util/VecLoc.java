@@ -5,12 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
-public class VecLoc {
+public class VecLoc implements Serializable {
 
     public int x;
     public int y;
@@ -64,8 +65,20 @@ public class VecLoc {
         return x == vecLoc.x && y == vecLoc.y && z == vecLoc.z && Objects.equals(world, vecLoc.world);
     }
 
-    public String getId() {
-        return String.valueOf(hashCode());
+//    public String getId() {
+//        return String.valueOf(hashCode());
+//    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
     }
 
     public int hashCode() {

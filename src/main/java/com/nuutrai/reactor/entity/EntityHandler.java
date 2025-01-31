@@ -10,16 +10,16 @@ import java.util.HashMap;
 
 public class EntityHandler implements Serializable {
 
-    private final HashMap<String, Sellable> entityMap = Maps.newHashMap();
+    private final HashMap<Integer, Sellable> entityMap = Maps.newHashMap();
     private final ArrayList<VecLoc> locations = new ArrayList<>();
 
     public void add(Sellable entity, VecLoc location) {
-        entityMap.put(location.getId(), entity);
+        entityMap.put(location.hashCode(), entity);
         locations.add(location);
     }
 
     public void remove(VecLoc location) {
-        entityMap.remove(location.getId());
+        entityMap.remove(location.hashCode());
         locations.remove(location);
     }
 
@@ -30,15 +30,15 @@ public class EntityHandler implements Serializable {
     }
 
     public void place(VecLoc loc) {
-        Material block = entityMap.get(loc.getId()).getBlock();
+        Material block = entityMap.get(loc.hashCode()).getBlock();
         loc.toLocation().getBlock().setType(block);
     }
 
     public Sellable getSellable(VecLoc loc) {
-        return entityMap.get(loc.getId());
+        return entityMap.get(loc.hashCode());
     }
 
-    public HashMap<String, Sellable> getEntityMap() {
+    public HashMap<Integer, Sellable> getEntityMap() {
         return entityMap;
     }
 
@@ -48,7 +48,7 @@ public class EntityHandler implements Serializable {
 
     public void tick() {
         for (VecLoc location: locations) {
-            entityMap.get(location.getId()).tick();
+            entityMap.get(location.hashCode()).tick();
         }
     }
 

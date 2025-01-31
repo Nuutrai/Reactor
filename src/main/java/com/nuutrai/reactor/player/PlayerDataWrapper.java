@@ -14,7 +14,7 @@ import java.util.UUID;
 public class PlayerDataWrapper implements Serializable {
 
     private int balance = 0;
-    private HashMap<String, Sellable> entities;
+    private HashMap<Integer, Sellable> entities;
     private ArrayList<VecLoc> locations;
     private int heat = 0;
     private int power = 0;
@@ -41,7 +41,7 @@ public class PlayerDataWrapper implements Serializable {
         return isPaused;
     }
 
-    public HashMap<String, Sellable> getEntities() {
+    public HashMap<Integer, Sellable> getEntities() {
         return entities;
     }
 
