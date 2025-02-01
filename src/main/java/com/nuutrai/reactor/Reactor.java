@@ -28,6 +28,14 @@ import java.util.logging.Logger;
  * <p>
  * Add breaking cells and others
  * <p>
+ * Fix throwing/dropping items
+ * <p>
+ * Add check for player's world before attempting place
+ * <p>
+ * Add check to make sure there aren't any entities in the player's place area
+ * <p>
+ * Add check for y level cause I don't want to do the 3d thing
+ * <p>
  * Make everything work like..
  * <p>
  * Add Raytracing

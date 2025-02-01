@@ -25,14 +25,6 @@ import java.util.HashMap;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
-/**
- * TODO:
- * <p>
- * Add check for player's world before attempting place
- * <p>
- * Add check for y level cause I don't want to do the
- */
-
 public class PlayerPlaceEntity implements Listener {
 
     private static HashMap<Player, Instant> cooldowns = Maps.newHashMap();
