@@ -21,9 +21,9 @@ import static com.nuutrai.reactor.Reactor.logger;
 public class WorldManager {
 
     static Reactor plugin = Reactor.instance;
-    static HashSet<Player> worlds = new HashSet<Player>();
+    static HashSet<Player> worlds = new HashSet<>();
 
-    @SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace"})
+    @SuppressWarnings({"CallToPrintStackTrace"})
     public static World createWorld(Player player) {
 
         String worldName = player.getUniqueId().toString();
@@ -41,12 +41,11 @@ public class WorldManager {
         try {
             world = c.createWorld();
             worlds.add(player);
+            PlayerData pd = DataManager.get(player);
+            pd.loadAllEntities();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        PlayerData pd = DataManager.get(player);
-        pd.loadAllEntities();
 
         return world;
     }

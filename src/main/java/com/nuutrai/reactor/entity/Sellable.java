@@ -14,9 +14,14 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * TODO:
- * <p>
- * Setup ids when possible
+ *
+ * @id The id of the sellable (same as buyable)
+ * @block The block type that will be placed
+ * @maxHealth The max health
+ * @player The associated player
+ * @position The position (VecLoc) of the sellable
+ * @currentHealth The current health of the sellable (To be determined at the end of the tick)
+ *
  */
 
 public abstract class Sellable {

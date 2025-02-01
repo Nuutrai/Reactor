@@ -17,6 +17,17 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashSet;
 import java.util.Map;
 
+/**
+ *
+ * @id The type or identifier of any reactor
+ * @cost The cost of the item
+ * @name The name shown in the store
+ * @description The description shown in the store
+ * @heat The amount of heat produced in a tick
+ * @health The max amount of heat for an item
+ * @item The item displayed in the store
+ *
+ */
 public abstract class Buyable {
 
     private final String id;
@@ -30,8 +41,6 @@ public abstract class Buyable {
      *  Health represents both durability & heat content.
      */
     private double health;
-    // Needed?
-    //    private boolean isDurability;
 
     private static final Map<String, Buyable> BUYABLES = Maps.newHashMap();
 
