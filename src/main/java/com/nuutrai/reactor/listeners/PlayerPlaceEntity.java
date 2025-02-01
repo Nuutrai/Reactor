@@ -86,14 +86,16 @@ public class PlayerPlaceEntity implements Listener {
 
         PlayerData pd = DataManager.get(p);
 
-        logger.info("" + pd.getBalance());
-
         Sellable copy = Sellable.get(id);
-        Material block = copy.getBlock();
-        Sellable entity = copy.clone();
+        Sellable entity = Sellable.create(copy, p, vecLoc);
+
+        logger.info("" + pd.getBalance());
         logger.info("" + entity.getType().getCost());
+
+        Material block = entity.getBlock();
         Location location = vecLoc.toLocation();
         location.getBlock().setType(block);
+
         DataManager.get(p).addEntity(entity, vecLoc);
     }
 
