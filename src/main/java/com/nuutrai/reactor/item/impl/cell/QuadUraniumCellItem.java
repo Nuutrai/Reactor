@@ -10,7 +10,7 @@ public class QuadUraniumCellItem extends Buyable {
         super(
                 "uranium_quad",
                 50,
-                "Uranium Cell",
+                "Quad Uranium Cell",
                 "Acts as four uranium cells, but only takes up a single tile. Produces x power and x heat per pulse for x ticks",
                 NamedTextColor.GREEN,
                 Material.EMERALD
