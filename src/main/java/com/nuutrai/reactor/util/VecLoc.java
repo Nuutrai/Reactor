@@ -3,9 +3,12 @@ package com.nuutrai.reactor.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -55,6 +58,26 @@ public class VecLoc implements Serializable {
 
     public UUID getUUID() {
         return world;
+    }
+
+    public List<VecLoc> getNeighbours() {
+        ArrayList<VecLoc> locs = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            locs.add(
+                    switch (i) {
+                        case 0: yield new VecLoc(x, y, z+1, world);
+                        case 1: yield new VecLoc(x, y, z-1, world);
+                        case 2: yield new VecLoc(x+1, y, z, world);
+                        case 3: yield new VecLoc(x-1, y, z, world);
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + i);
+                    }
+            );
+        }
+
+        return locs;
+
     }
 
     public static World getWorld(UUID world) {
