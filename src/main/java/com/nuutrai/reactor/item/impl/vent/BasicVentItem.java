@@ -12,6 +12,9 @@ public class BasicVentItem extends Buyable {
                 50,
                 "Basic Heat Vent",
                 "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
+                4,
+                0,
+                40,
                 NamedTextColor.GRAY,
                 Material.IRON_INGOT
         );

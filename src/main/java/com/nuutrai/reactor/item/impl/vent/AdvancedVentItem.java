@@ -12,6 +12,9 @@ public class AdvancedVentItem extends Buyable {
                 12500,
                 "Advanced Heat Vent",
                 "Lowers the heat of itself by x per tick. Holds a maximum of x heat",
+                300,
+                0,
+                3000,
                 NamedTextColor.GRAY,
                 Material.IRON_INGOT
         );

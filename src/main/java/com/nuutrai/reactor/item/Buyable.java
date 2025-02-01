@@ -35,8 +35,8 @@ public abstract class Buyable {
     private final String name;
     private final String description;
     private double heat;
+    private double power;
     private final ItemStack item;
-
     /**
      *  Health represents both durability & heat content.
      */
@@ -44,15 +44,21 @@ public abstract class Buyable {
 
     private static final Map<String, Buyable> BUYABLES = Maps.newHashMap();
 
-    public Buyable(String id, int cost, String name, String description, ItemStack item) {
+    public Buyable(String id, int cost, String name, String description, double heat, double power, double health, ItemStack item) {
         this.id = id;
         this.cost = cost;
         this.name = name;
         this.description = description;
+        this.heat = heat;
+        this.power = power;
         this.item = item;
+        this.health = health;
     }
 
-    public Buyable(String id, int cost, String name, String description, NamedTextColor colour, Material item) {
+    public Buyable(String id, int cost, String name, String description, double heat, double power, double health, NamedTextColor colour, Material item) {
+        this.heat = heat;
+        this.health = health;
+        this.power = power;
         ItemStack itemWithMeta = ItemStack.of(item);
         ItemMeta meta = itemWithMeta.getItemMeta();
         NamespacedKey key = new NamespacedKey(Reactor.instance, "reactor-id");
@@ -96,6 +102,10 @@ public abstract class Buyable {
 
     public ItemStack getItem() {
         return item;
+    }
+
+    public double getPower() {
+        return power;
     }
 
     // Needed here? Probably put in store stuff
