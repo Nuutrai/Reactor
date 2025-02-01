@@ -43,21 +43,22 @@ public abstract class Sellable {
         this.maxHealth = getType().getHealth();
     }
 
-    public static void create(Sellable s) {
-        // No clue at the moment, just here for now
+    public static Sellable create(Sellable sellable, Player player, Location position) {
+        UUID uuid = player.getUniqueId();
+        return create(sellable, uuid, new VecLoc(position, uuid));
     }
 
-    public static Sellable create(Sellable sellable, Player player, Location position) {
+    public static Sellable create(Sellable sellable, Player player, VecLoc position) {
         return create(sellable, player.getUniqueId(), position);
     }
 
-    public static Sellable create(Sellable sellable, UUID uuid, Location position) {
-        sellable.player = uuid;
-        sellable.position = new VecLoc(position, uuid);
+    public static Sellable create(Sellable sellable, UUID uuid, VecLoc position) {
+        Sellable s = sellable.clone();
 
-        // Make block at position
+        s.player = uuid;
+        s.position = position;
 
-        return sellable;
+        return s;
     }
 
     public static Sellable get(String id) {

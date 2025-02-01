@@ -2,6 +2,7 @@ package com.nuutrai.reactor.world;
 
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.data.DataManager;
+import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.util.FileUtils;
 import org.bukkit.World;
@@ -45,7 +46,7 @@ public class WorldManager {
         }
 
         PlayerData pd = DataManager.get(player);
-        pd.getEntities();
+        pd.loadAllEntities();
 
         return world;
     }
