@@ -1,10 +1,7 @@
 package com.nuutrai.reactor.data;
 
 import com.google.common.collect.Maps;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.nuutrai.reactor.Reactor;
 import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.player.PlayerDataWrapper;
@@ -32,24 +29,13 @@ public class DataManager {
 
     public static void loadPlayerData(Player player) {
 
-        Gson gson = new GsonBuilder()
-                .addDeserializationExclusionStrategy(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        logger.info(f.getName());
-                        return f.getName().equals("referent");
-                    }
+        String jsonString = readFromFile(player);
 
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
-                })
-                .create();
+        Gson gson = new Gson();
 
+        JsonObject json = gson.fromJson(jsonString, JsonObject.class);
 
-        String json = readFromFile(player);
-        PlayerDataWrapper playerDataWrapper = gson.fromJson(json, PlayerDataWrapper.class);
+        PlayerDataWrapper playerDataWrapper = JSONConversion.playerDataFromJson(json);
         PlayerData playerData = new PlayerData(playerDataWrapper);
         playerData.setPlayer(player);
         playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
@@ -64,22 +50,13 @@ public class DataManager {
     public static void savePlayerData(Player player) {
         PlayerData playerData = playerDataMap.get(player);
         PlayerDataWrapper playerDataWrapper = new PlayerDataWrapper(playerData);
-        Gson gson = new GsonBuilder()
-                .addDeserializationExclusionStrategy(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        logger.info(f.getName());
-                        return f.getName().equals("value"); // Skip the problematic field
-                    }
 
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false; // No classes skipped
-                    }
-                })
-                .create();
-        String json = gson.toJson(playerDataWrapper);
-        writeToFile(player, json);
+        JsonObject json = JSONConversion.playerDataToJson(playerDataWrapper);
+
+        Gson gson = new Gson();
+
+        String jsonString = gson.toJson(json);
+        writeToFile(player, jsonString);
     }
 
     // File stuff

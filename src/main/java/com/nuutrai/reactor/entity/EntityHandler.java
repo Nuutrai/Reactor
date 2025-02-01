@@ -8,18 +8,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.nuutrai.reactor.Reactor.logger;
+
 public class EntityHandler implements Serializable {
 
-    private final HashMap<Integer, Sellable> entityMap = Maps.newHashMap();
+    private final HashMap<VecLoc, Sellable> entityMap = Maps.newHashMap();
     private final ArrayList<VecLoc> locations = new ArrayList<>();
 
     public void add(Sellable entity, VecLoc location) {
-        entityMap.put(location.hashCode(), entity);
+        entityMap.put(location, entity);
         locations.add(location);
     }
 
     public void remove(VecLoc location) {
-        entityMap.remove(location.hashCode());
+        entityMap.remove(location);
         locations.remove(location);
     }
 
@@ -30,15 +32,15 @@ public class EntityHandler implements Serializable {
     }
 
     public void place(VecLoc loc) {
-        Material block = entityMap.get(loc.hashCode()).getBlock();
+        Material block = entityMap.get(loc).getBlock();
         loc.toLocation().getBlock().setType(block);
     }
 
     public Sellable getSellable(VecLoc loc) {
-        return entityMap.get(loc.hashCode());
+        return entityMap.get(loc);
     }
 
-    public HashMap<Integer, Sellable> getEntityMap() {
+    public HashMap<VecLoc, Sellable> getEntityMap() {
         return entityMap;
     }
 
@@ -48,7 +50,7 @@ public class EntityHandler implements Serializable {
 
     public void tick() {
         for (VecLoc location: locations) {
-            entityMap.get(location.hashCode()).tick();
+            entityMap.get(location).tick();
         }
     }
 

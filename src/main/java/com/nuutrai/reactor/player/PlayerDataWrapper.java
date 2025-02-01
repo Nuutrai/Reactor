@@ -14,7 +14,7 @@ import java.util.UUID;
 public class PlayerDataWrapper implements Serializable {
 
     private int balance = 0;
-    private HashMap<Integer, Sellable> entities;
+    private HashMap<VecLoc, Sellable> entities;
     private ArrayList<VecLoc> locations;
     private int heat = 0;
     private int power = 0;
@@ -29,6 +29,15 @@ public class PlayerDataWrapper implements Serializable {
         this.locations = pd.getEntities().getLocations();
     }
 
+    public PlayerDataWrapper(int balance, HashMap<VecLoc, Sellable> entities, ArrayList<VecLoc> locations, int heat, int power, boolean isPaused) {
+        this.balance = balance;
+        this.entities = entities;
+        this.locations = locations;
+        this.heat = heat;
+        this.power = power;
+        this.isPaused = isPaused;
+    }
+
     public int getBalance() {
         return balance;
     }
@@ -41,7 +50,7 @@ public class PlayerDataWrapper implements Serializable {
         return isPaused;
     }
 
-    public HashMap<Integer, Sellable> getEntities() {
+    public HashMap<VecLoc, Sellable> getEntities() {
         return entities;
     }
 

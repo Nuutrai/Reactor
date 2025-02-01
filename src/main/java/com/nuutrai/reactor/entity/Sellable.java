@@ -19,7 +19,7 @@ import java.util.UUID;
  * Setup ids when possible
  */
 
-public abstract class Sellable implements JsonSerializer<Sellable>, JsonDeserializer<Sellable> {
+public abstract class Sellable {
 
     private final String id;
     private final Material block;

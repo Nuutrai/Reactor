@@ -53,6 +53,10 @@ public class VecLoc implements Serializable {
         return getWorld(world);
     }
 
+    public UUID getUUID() {
+        return world;
+    }
+
     public static World getWorld(UUID world) {
         return Bukkit.getWorld(world.toString());
     }
