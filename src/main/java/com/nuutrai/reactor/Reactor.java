@@ -72,6 +72,8 @@ public final class Reactor extends JavaPlugin {
 
         logger.info("Data folder: " + dataFolder);
 
+        WorldManager.init();
+
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeave(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceBlock(), this);
