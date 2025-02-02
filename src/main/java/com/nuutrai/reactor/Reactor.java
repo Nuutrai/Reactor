@@ -10,6 +10,7 @@ import com.nuutrai.reactor.item.impl.cell.*;
 import com.nuutrai.reactor.item.impl.vent.*;
 import com.nuutrai.reactor.listeners.*;
 import com.nuutrai.reactor.player.PlayerData;
+import com.nuutrai.reactor.tick.Ticker;
 import com.nuutrai.reactor.world.WorldManager;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
@@ -50,6 +51,7 @@ import java.util.logging.Logger;
 public final class Reactor extends JavaPlugin {
 
     public static Reactor instance;
+    public Ticker ticker;
     public static boolean HALTTICK = false;
     public static Logger logger;
     public static File dataFolder;
@@ -65,6 +67,7 @@ public final class Reactor extends JavaPlugin {
         logger = this.getLogger();
         dataFolder = this.getDataFolder();
         manager = Reactor.instance.getLifecycleManager();
+        ticker = new Ticker();
 
         logger.info("Reactor startup initiated");
 
@@ -102,24 +105,11 @@ public final class Reactor extends JavaPlugin {
 
         RegisterCommands.loadInventoryTest();
 
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
-            logger.info("Tick!");
-            for (Player p: getServer().getOnlinePlayers()) {
-                PlayerData pd = DataManager.get(p);
-
-                DataManager.get(p).tick();
-            }
+        Bukkit.getScheduler().runTaskTimer(instance, () -> {
+            ticker.tick();
         }, 60, 60);
 
         WorldManager.purge();
-
-//        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-//            for (Player player: Bukkit.getServer().getOnlinePlayers()) {
-//                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-//                   player.entityHandler
-//                });
-//            }
-//        });
 
         logger.info("Reactor startup complete");
 
