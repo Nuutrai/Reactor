@@ -1,7 +1,6 @@
 package com.nuutrai.reactor;
 
 import com.nuutrai.reactor.commands.RegisterCommands;
-import com.nuutrai.reactor.data.DataManager;
 import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.entity.impl.cell.*;
 import com.nuutrai.reactor.entity.impl.vent.*;
@@ -9,12 +8,10 @@ import com.nuutrai.reactor.item.Buyable;
 import com.nuutrai.reactor.item.impl.cell.*;
 import com.nuutrai.reactor.item.impl.vent.*;
 import com.nuutrai.reactor.listeners.*;
-import com.nuutrai.reactor.player.PlayerData;
 import com.nuutrai.reactor.tick.Ticker;
 import com.nuutrai.reactor.world.WorldManager;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -82,6 +79,9 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceBlock(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryClick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamage(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDrop(), this);
 
         /* Buyables */
 
