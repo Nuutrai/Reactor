@@ -26,8 +26,10 @@ public class PlayerJoin implements Listener {
 
         Bukkit.getScheduler().runTask(instance, () -> {
             World world = WorldManager.createWorld(p);
-            p.teleport(new Location(world, 0, 121, 0));
-            p.setAllowFlight(true);
+            Bukkit.getScheduler().runTaskLater(instance, () -> {
+                p.teleport(new Location(world, 0, 121, 0));
+                p.setAllowFlight(true);
+            }, 20);
         });
 
         if (p.getName().equals("Nuutrai")) {
