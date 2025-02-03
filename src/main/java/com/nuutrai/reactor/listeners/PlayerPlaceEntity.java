@@ -27,7 +27,7 @@ import static com.nuutrai.reactor.Reactor.logger;
 public class PlayerPlaceEntity implements Listener {
 
     private static HashMap<Player, Instant> cooldowns = Maps.newHashMap();
-    private static final int timeToWait = 200;
+    private static final int timeToWait = 100;
     private static final int timeToPurge = 1000;
 
     @EventHandler
