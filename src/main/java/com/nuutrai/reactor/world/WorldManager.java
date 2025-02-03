@@ -7,6 +7,7 @@ import com.nuutrai.reactor.util.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class WorldManager {
     private static final Logger log = LoggerFactory.getLogger(WorldManager.class);
     static Reactor plugin = Reactor.instance;
     static HashSet<Player> worlds = new HashSet<>();
+    static VoidGenerator generator = new VoidGenerator(plugin);
 
     public static World createWorld(Player player) {
 
@@ -47,7 +49,7 @@ public class WorldManager {
 
         Future<Boolean> future = executor.submit(() -> {
             logger.info("1");
-            return cloneWorld("init", player.getUniqueId().toString());
+            return cloneWorld("init", worldName);
         });
 
         try {
@@ -61,72 +63,32 @@ public class WorldManager {
         }
 
         logger.info("3");
-        WorldCreator c = new WorldCreator(worldName);
-        c.seed(0);
-        c.generator(new VoidGenerator(Reactor.instance));
 
-        World world = null;
-        try {
-            world = c.createWorld();
-            worlds.add(player);
-            PlayerData pd = DataManager.get(player);
-            pd.loadAllEntities();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        addWorld(worldName);
 
-        return world;
+        worlds.add(player);
+        PlayerData pd = DataManager.get(player);
+        pd.setPaused(true);
+        pd.loadAllEntities();
+
+        logger.info("Done");
+
+        return Bukkit.getWorld(worldName);
 
     }
 
-    @SuppressWarnings({"CallToPrintStackTrace"})
-    public static World createWorld1(Player player) {
-
-        String worldName = player.getUniqueId().toString();
-
-        File worldFolder = new File(plugin.getServer().getWorldContainer(), worldName);
-        if (worldFolder.exists()) {
-            FileUtils.deleteFolder(worldFolder);
-        }
-
-        WorldCreator c = new WorldCreator(worldName);
-        c.seed(0);
-        c.generator(new VoidGenerator(Reactor.instance));
-
-        World world = null;
-        try {
-            world = c.createWorld();
-            worlds.add(player);
-            PlayerData pd = DataManager.get(player);
-            pd.loadAllEntities();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return world;
-    }
-
-    public static World init() {
+    public static boolean init() {
 
         String worldName = "init";
 
         File worldFolder = new File(plugin.getServer().getWorldContainer(), worldName);
         if (worldFolder.exists()) {
-            return null;
+            return true;
         }
 
-        WorldCreator c = new WorldCreator(worldName);
-        c.seed(0);
-        c.generator(new VoidGenerator(Reactor.instance));
+        addWorld("init");
 
-        World world = null;
-        try {
-            world = c.createWorld();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return world;
+        return true;
     }
 
     public static boolean cloneWorld(String oldName, String newName) {
@@ -152,6 +114,25 @@ public class WorldManager {
         }
 
         return false;
+    }
+
+    public static boolean addWorld(String name) {
+
+        WorldCreator c = new WorldCreator(name);
+        c.seed(0);
+        c.generator(generator);
+        c.environment(World.Environment.NORMAL);
+        c.type(WorldType.FLAT);
+        c.generateStructures(false);
+
+//        if (!doLoad(c, true)) {
+//            logger.severe("Failed to Create/Load the world '" + name + "'");
+//            return false;
+//        }
+
+        c.createWorld();
+
+        return true;
     }
 
     public static boolean deleteWorld(Player player) {
