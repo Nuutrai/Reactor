@@ -21,8 +21,6 @@ import static com.nuutrai.reactor.Reactor.logger;
 public class DataManager {
 
     private static final Map<Player, PlayerData> playerDataMap = Maps.newHashMap();
-
-
     public static PlayerData get(Player player) {
         return playerDataMap.get(player);
     }

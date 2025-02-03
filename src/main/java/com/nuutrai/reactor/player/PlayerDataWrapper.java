@@ -3,7 +3,10 @@ package com.nuutrai.reactor.player;
 import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.entity.impl.cell.UraniumCellEntity;
 import com.nuutrai.reactor.util.VecLoc;
+import io.papermc.paper.entity.TeleportFlag;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 import java.io.Serializable;
 import java.net.Inet4Address;
@@ -18,24 +21,21 @@ public class PlayerDataWrapper implements Serializable {
     private ArrayList<VecLoc> locations;
     private int heat = 0;
     private int power = 0;
-    private boolean isPaused = false;
 
     public PlayerDataWrapper(PlayerData pd) {
         this.balance = pd.getBalance();
         this.heat = pd.getHeat();
         this.power = pd.getPower();
-        this.isPaused = pd.isPaused();
         this.entities = pd.getEntities().getEntityMap();
         this.locations = pd.getEntities().getLocations();
     }
 
-    public PlayerDataWrapper(int balance, HashMap<VecLoc, Sellable> entities, ArrayList<VecLoc> locations, int heat, int power, boolean isPaused) {
+    public PlayerDataWrapper(int balance, HashMap<VecLoc, Sellable> entities, ArrayList<VecLoc> locations, int heat, int power) {
         this.balance = balance;
         this.entities = entities;
         this.locations = locations;
         this.heat = heat;
         this.power = power;
-        this.isPaused = isPaused;
     }
 
     public int getBalance() {
@@ -44,10 +44,6 @@ public class PlayerDataWrapper implements Serializable {
 
     public int getHeat() {
         return heat;
-    }
-
-    public boolean isPaused() {
-        return isPaused;
     }
 
     public HashMap<VecLoc, Sellable> getEntities() {

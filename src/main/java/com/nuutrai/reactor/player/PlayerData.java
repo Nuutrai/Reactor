@@ -3,13 +3,19 @@ package com.nuutrai.reactor.player;
 import com.nuutrai.reactor.entity.EntityHandler;
 import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.util.VecLoc;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.Serializable;
-import java.util.UUID;
+
+import static com.nuutrai.reactor.Reactor.instance;
 
 public class PlayerData implements Serializable {
 
@@ -17,8 +23,8 @@ public class PlayerData implements Serializable {
     private EntityHandler entities = new EntityHandler();
     private int heat = 0;
     private int power = 0;
-    public  ItemStack selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
-    private boolean isPaused = false;
+    public  ItemStack selection = ItemStack.of(Material.AIR);
+    private boolean isPaused = true;
     private Player player;
 
     public PlayerData() {
@@ -28,7 +34,6 @@ public class PlayerData implements Serializable {
         this.balance = playerDataWrapper.getBalance();
         this.heat = playerDataWrapper.getHeat();
         this.power = playerDataWrapper.getPower();
-        this.isPaused = playerDataWrapper.isPaused();
         for (VecLoc loc: playerDataWrapper.getLocations()) {
             Sellable s = playerDataWrapper.getEntities().get(loc);
             this.entities.add(s, loc);
@@ -103,6 +108,27 @@ public class PlayerData implements Serializable {
         if (!isPaused()) {
             entities.tick();
         }
+
+        Bukkit.getScheduler().runTask(instance, () -> {
+            player.getInventory().setItem(40, determinePauseItem());
+        });
+
+    }
+
+    public ItemStack determinePauseItem() {
+        ItemStack pause;
+        NamedTextColor pauseColour = NamedTextColor.RED;
+        if (isPaused()) {
+            pause = ItemStack.of(Material.FIREWORK_STAR);
+            pauseColour = NamedTextColor.GRAY;
+        } else {
+            pause = ItemStack.of(Material.FIRE_CHARGE);
+        }
+
+        ItemMeta pauseMeta = pause.getItemMeta();
+        pauseMeta.displayName(Component.text("Pause", pauseColour).decoration(TextDecoration.ITALIC, false));
+        pause.setItemMeta(pauseMeta);
+        return pause;
     }
 
     public boolean isPaused() {

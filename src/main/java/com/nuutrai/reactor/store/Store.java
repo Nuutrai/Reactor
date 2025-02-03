@@ -25,7 +25,7 @@ public class Store {
 
        ArrayList<ItemStack> items = getItems(player);
 
-       for (int i = 0; i < items.size() - 1; i++) {
+       for (int i = 0; i < items.size(); i++) {
            inventory.setItem(i, items.get(i));
        }
    }
@@ -45,11 +45,7 @@ public class Store {
 
        PlayerData playerData = DataManager.get(player);
 
-       logger.info(playerData.selection.toString());
-
-//       items.add(playerData.selection);
        items.add(ItemStack.of(Material.AIR));
-//       items.add(ItemStack.of(Material.BARRIER));
        ItemStack heat = new ItemStack(Material.BLAZE_POWDER);
        ItemMeta heatMeta = heat.getItemMeta();
        heatMeta.displayName(Component.text("Heat", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
@@ -90,15 +86,7 @@ public class Store {
            items.add(ItemStack.of(Material.AIR));
        }
 
-       ItemStack pause;
-       if (playerData.isPaused()) {
-           pause = new ItemStack(Material.FIREWORK_STAR);
-       } else {
-           pause = new ItemStack(Material.FIRE_CHARGE);
-       }
-
-       pause.getItemMeta().displayName(Component.text("Pause", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-       items.add(pause);
+       items.add(playerData.determinePauseItem());
 
        return items;
    }

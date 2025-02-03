@@ -9,8 +9,6 @@ import com.nuutrai.reactor.util.VecLoc;
 
 import java.util.*;
 
-import static com.nuutrai.reactor.Reactor.logger;
-
 public class JSONConversion {
 
     public static JsonObject playerDataToJson(PlayerDataWrapper pd) {
@@ -19,7 +17,6 @@ public class JSONConversion {
         playerDataJson.addProperty("balance", pd.getBalance());
         playerDataJson.addProperty("heat", pd.getHeat());
         playerDataJson.addProperty("power", pd.getPower());
-        playerDataJson.addProperty("paused", pd.isPaused());
 
         HashMap<VecLoc, Sellable> entityMap = pd.getEntities();
 
@@ -79,7 +76,6 @@ public class JSONConversion {
         int balance = json.get("balance").getAsInt();
         int heat = json.get("heat").getAsInt();
         int power = json.get("power").getAsInt();
-        boolean paused = json.get("paused").getAsBoolean();
 
         HashMap<VecLoc, Sellable> entityMap = new HashMap<>();
         ArrayList<VecLoc> locationsSet = new ArrayList<>();
@@ -98,7 +94,7 @@ public class JSONConversion {
             }
         }
 
-        return new PlayerDataWrapper(balance, entityMap, locationsSet, heat, power, paused);
+        return new PlayerDataWrapper(balance, entityMap, locationsSet, heat, power);
     }
 
     public static List<Sellable> sellableFromJson(JsonArray json) {
@@ -134,7 +130,6 @@ public class JSONConversion {
             int y = vecLocObject.get("y").getAsInt();
             int z = vecLocObject.get("z").getAsInt();
             String uuidAsString = vecLocObject.get("world").getAsString();
-            System.out.println(uuidAsString);
             UUID uuid = UUID.fromString(uuidAsString);
 
             vecLocs.add(new VecLoc(x, y, z, uuid));
