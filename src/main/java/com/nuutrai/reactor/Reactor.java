@@ -1,5 +1,6 @@
 package com.nuutrai.reactor;
 
+import com.google.common.reflect.ClassPath;
 import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.entity.impl.cell.*;
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 /**
@@ -74,14 +77,11 @@ public final class Reactor extends JavaPlugin {
 
         WorldManager.init();
 
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerLeave(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerInventoryClick(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDamage(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDrop(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerSwapHand(), this);
+        try {
+            registerListeners("com.nuutrai.reactor.listeners");
+        } catch (IOException e) {
+            logger.severe("Something went horribly wrong whilst loading events!");
+        }
 
         /* Buyables */
 
@@ -103,7 +103,11 @@ public final class Reactor extends JavaPlugin {
 
         /*          */
 
-        RegisterCommands.loadInventoryTest();
+        try {
+            RegisterCommands.load();
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            logger.severe("Something went incredibly wrong whist loading commands!");
+        }
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             ticker.tick();
@@ -122,11 +126,6 @@ public final class Reactor extends JavaPlugin {
 
     }
 
-    @Override
-    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
-        return super.getDefaultWorldGenerator(worldName, id);
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void ensureDataFolder() {
         if (getDataFolder().exists())
@@ -134,5 +133,34 @@ public final class Reactor extends JavaPlugin {
         getDataFolder().mkdir();
     }
 
+    private void registerListeners(String packageName) throws IOException {
+        // Get all classes in the specified package using Guava's ClassPath
+        ClassPath classPath = ClassPath.from(this.getClassLoader());
+        logger.info(classPath.getTopLevelClassesRecursive(packageName).toString());
+        logger.info("" + classPath.getTopLevelClassesRecursive(packageName).size());
+        for (ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(packageName)) {
+            Class<?> clazz = classInfo.load();
+
+            // Check if the class is a subclass of Listener
+            if (Listener.class.isAssignableFrom(clazz)) {
+                try {
+                    // Ensure the class has a no-arg constructor
+                    Constructor<?> constructor = clazz.getDeclaredConstructor();
+                    constructor.setAccessible(true);
+                    Listener listener = (Listener) constructor.newInstance();
+
+                    // Register the listener with Bukkit
+                    getServer().getPluginManager().registerEvents(listener, this);
+                    logger.info("Registered listener: " + clazz.getSimpleName());
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                         InvocationTargetException e) {
+                    logger.severe("Failed to register listener: " + clazz.getSimpleName());
+                    e.printStackTrace();
+                }
+            } else {
+                logger.info("no");
+            }
+        }
+    }
 
 }

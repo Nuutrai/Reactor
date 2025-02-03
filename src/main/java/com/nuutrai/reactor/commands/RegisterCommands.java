@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.nuutrai.reactor.Reactor.logger;
@@ -21,6 +23,15 @@ import static io.papermc.paper.command.brigadier.Commands.argument;
 
 @SuppressWarnings("UnstableApiUsage")
 public class RegisterCommands {
+
+    public static void load() throws InvocationTargetException, IllegalAccessException {
+        Method[] methods = RegisterCommands.class.getDeclaredMethods();
+        for (Method m: methods) {
+            if (!m.isAnnotationPresent(Deprecated.class) && !m.getName().equals("load") && !m.getName().contains("$")) {
+                m.invoke(null);
+            }
+        }
+    }
 
     public static void loadInventoryTest() {
         Reactor.manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
