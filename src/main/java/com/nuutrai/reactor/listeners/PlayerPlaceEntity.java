@@ -33,28 +33,19 @@ public class PlayerPlaceEntity implements Listener {
 
     @EventHandler
     public void PlaceInteractEvent(PlayerInteractEvent e) {
-        // Checks
-        ItemStack item = e.getItem();
-        if (item == null || item.getType() == Material.AIR)
+
+        Player p = e.getPlayer();
+        if (!p.getWorld().equals(Bukkit.getWorld(p.getUniqueId().toString())))
             return;
 
-        NamespacedKey key = new NamespacedKey(Reactor.instance, "reactor-id");
-        String id = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
-        if (id == null || id.isEmpty())
-            return;
+        e.setCancelled(true);
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            if (e.getClickedBlock().getType() != null)
-                logger.info(e.getClickedBlock().getType().name());
-            return;
-        }
+        // Add raytrace at some point
         Block block = e.getClickedBlock();
         if (block == null)
             return;
-        // End
 
         // Add cooldown
-        Player p = e.getPlayer();
         if (!cooldowns.containsKey(p))
             cooldowns.put(p, Instant.now().minusMillis(timeToWait));
         if (cooldowns.get(p).isAfter(Instant.now()))
@@ -69,8 +60,49 @@ public class PlayerPlaceEntity implements Listener {
         }, timeToPurge);
         // End
 
-        VecLoc newLoc = new VecLoc(block.getLocation().add(FaceToDirection.get(e.getBlockFace())), p.getUniqueId());
-        place(id, p, newLoc);
+        if (e.getAction().isRightClick()) {
+
+            VecLoc newLoc = new VecLoc(block.getLocation().add(FaceToDirection.get(e.getBlockFace())), p.getUniqueId());
+
+            if (newLoc.getY() != 121)
+                return;
+
+            for (Player player: p.getWorld().getPlayers()) {
+                VecLoc pLoc = new VecLoc(player.getLocation(), p.getUniqueId());
+                if (pLoc.getX() == newLoc.getX() && pLoc.getY() == newLoc.getY() && pLoc.getZ() == newLoc.getZ())
+                    return;
+            }
+
+            // Checks
+            ItemStack item = e.getItem();
+            if (item == null || item.getType() == Material.AIR)
+                return;
+
+            NamespacedKey key = new NamespacedKey(Reactor.instance, "reactor-id");
+            String id = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+            if (id == null || id.isEmpty())
+                return;
+            // End
+
+            place(id, p, newLoc);
+
+        } else if (e.getAction().isLeftClick()) {
+            VecLoc newLoc = new VecLoc(block.getLocation(), p.getUniqueId());
+            breakEntity(p, newLoc);
+        }
+    }
+
+    public static void breakEntity(Player p, VecLoc vecloc) {
+        PlayerData pd = DataManager.get(p);
+
+        if (pd.getEntities().getSellable(vecloc) == null) {
+            p.getInventory().setItem(4, ItemStack.of(Material.AIR));
+            return;
+        }
+
+        pd.getEntities().remove(vecloc);
+        vecloc.toLocation().getBlock().setType(Material.AIR);
+
     }
 
     public static void place(String id, Player p, VecLoc vecLoc) {

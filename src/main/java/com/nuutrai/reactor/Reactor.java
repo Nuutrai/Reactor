@@ -82,6 +82,7 @@ public final class Reactor extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerDamage(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDrop(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSwapHand(), this);
 
         /* Buyables */
 
@@ -105,9 +106,9 @@ public final class Reactor extends JavaPlugin {
 
         RegisterCommands.loadInventoryTest();
 
-        Bukkit.getScheduler().runTaskTimer(instance, () -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             ticker.tick();
-        }, 60, 60);
+        }, 1, 0);
 
         WorldManager.purge();
 
