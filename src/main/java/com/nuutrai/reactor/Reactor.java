@@ -3,24 +3,18 @@ package com.nuutrai.reactor;
 import com.google.common.reflect.ClassPath;
 import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.entity.impl.cell.*;
-import com.nuutrai.reactor.entity.impl.vent.*;
 import com.nuutrai.reactor.item.Buyable;
-import com.nuutrai.reactor.item.impl.cell.*;
-import com.nuutrai.reactor.item.impl.vent.*;
-import com.nuutrai.reactor.listeners.*;
 import com.nuutrai.reactor.tick.Ticker;
 import com.nuutrai.reactor.world.WorldManager;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
-import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
@@ -48,15 +42,16 @@ import java.util.logging.Logger;
  * Look into making more items
  */
 
+@SuppressWarnings({"", "unchecked"})
 public final class Reactor extends JavaPlugin {
 
     public static Reactor instance;
-    public Ticker ticker;
     public static boolean HALTTICK = false;
     public static Logger logger;
     public static File dataFolder;
     @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
     public static LifecycleEventManager<Plugin> manager;
+    public Ticker ticker;
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
@@ -83,25 +78,17 @@ public final class Reactor extends JavaPlugin {
             logger.severe("Something went horribly wrong whilst loading events!");
         }
 
-        /* Buyables */
+        try {
+            registerReactorElements("item", Buyable.class);
+        } catch (IOException e) {
+            logger.severe("Something went horribly wrong whilst loading buyables!");
+        }
 
-        Buyable.add(new AdvancedVentItem());
-        Buyable.add(new BasicVentItem());
-
-        Buyable.add(new DoubleUraniumCellItem());
-        Buyable.add(new QuadUraniumCellItem());
-        Buyable.add(new UraniumCellItem());
-
-        /* Sellables */
-
-        Sellable.add(new AdvancedVentEntity());
-        Sellable.add(new BasicVentEntity());
-
-        Sellable.add(new DoubleUraniumCellEntity());
-        Sellable.add(new QuadUraniumCellEntity());
-        Sellable.add(new UraniumCellEntity());
-
-        /*          */
+        try {
+            registerReactorElements("entity", Sellable.class);
+        } catch (IOException e) {
+            logger.severe("Something went horribly wrong whilst loading sellables!");
+        }
 
         try {
             RegisterCommands.load();
@@ -133,6 +120,33 @@ public final class Reactor extends JavaPlugin {
         getDataFolder().mkdir();
     }
 
+    private <T> void registerReactorElements(String subpackageName, Class<T> parentClass) throws IOException {
+        ClassPath classPath = ClassPath.from(this.getClassLoader());
+
+        String packageName = "com.nuutrai.reactor." + subpackageName;
+
+        for (ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(packageName)) {
+            Class<?> clazz = classInfo.load();
+
+            if (parentClass.isAssignableFrom(clazz) && !clazz.equals(parentClass)) {
+                try {
+                    Constructor<?> constructor = clazz.getDeclaredConstructor();
+                    constructor.setAccessible(true);
+                    T instance = (T) constructor.newInstance();
+
+                    // Call the static add() method on the parent class
+                    parentClass.getMethod("add", parentClass).invoke(null, instance);
+
+                    logger.info("Registered " + parentClass.getSimpleName() + ": " + clazz.getSimpleName());
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                         InvocationTargetException e) {
+                    logger.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName());
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void registerListeners(String packageName) throws IOException {
         // Get all classes in the specified package using Guava's ClassPath
         ClassPath classPath = ClassPath.from(this.getClassLoader());
@@ -157,10 +171,7 @@ public final class Reactor extends JavaPlugin {
                     logger.severe("Failed to register listener: " + clazz.getSimpleName());
                     e.printStackTrace();
                 }
-            } else {
-                logger.info("no");
             }
         }
     }
-
 }
