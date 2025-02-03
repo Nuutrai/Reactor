@@ -15,8 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 
-import static com.nuutrai.reactor.Reactor.logger;
-
 public class Store {
 
    public static void setup(Player player) {

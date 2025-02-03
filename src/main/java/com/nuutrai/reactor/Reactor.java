@@ -1,6 +1,5 @@
 package com.nuutrai.reactor;
 
-import com.google.common.reflect.ClassPath;
 import com.nuutrai.reactor.commands.RegisterCommands;
 import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.entity.impl.cell.*;
@@ -13,7 +12,6 @@ import com.nuutrai.reactor.tick.Ticker;
 import com.nuutrai.reactor.world.WorldManager;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,9 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 /**
@@ -79,16 +74,8 @@ public final class Reactor extends JavaPlugin {
 
         WorldManager.init();
 
-        // We'll get this working
-//        try {
-//            registerListeners("com.nuutrai");
-//        } catch (IOException e) {
-//            logger.severe("Something went very wrong whilst loading events!");
-//        }
-
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeave(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerPlaceBlock(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryClick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPlaceEntity(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDamage(), this);
@@ -147,34 +134,5 @@ public final class Reactor extends JavaPlugin {
         getDataFolder().mkdir();
     }
 
-    private void registerListeners(String packageName) throws IOException {
-        // Get all classes in the specified package using Guava's ClassPath
-        ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
-        logger.info(classPath.getTopLevelClassesRecursive(packageName).toString());
-        logger.info("" + classPath.getTopLevelClassesRecursive(packageName).size());
-        for (ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(packageName)) {
-            Class<?> clazz = classInfo.load();
-
-            // Check if the class is a subclass of Listener
-            if (Listener.class.isAssignableFrom(clazz)) {
-                try {
-                    // Ensure the class has a no-arg constructor
-                    Constructor<?> constructor = clazz.getDeclaredConstructor();
-                    constructor.setAccessible(true);
-                    Listener listener = (Listener) constructor.newInstance();
-
-                    // Register the listener with Bukkit
-                    getServer().getPluginManager().registerEvents(listener, this);
-                    logger.info("Registered listener: " + clazz.getSimpleName());
-                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                         InvocationTargetException e) {
-                    logger.severe("Failed to register listener: " + clazz.getSimpleName());
-                    e.printStackTrace();
-                }
-            } else {
-                logger.info("no");
-            }
-        }
-    }
 
 }
