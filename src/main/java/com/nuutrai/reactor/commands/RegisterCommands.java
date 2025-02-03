@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.nuutrai.reactor.Reactor.logger;
@@ -26,8 +27,9 @@ public class RegisterCommands {
     public static void load() throws InvocationTargetException, IllegalAccessException {
         Method[] methods = RegisterCommands.class.getDeclaredMethods();
         for (Method m: methods) {
-            if (!m.isAnnotationPresent(Deprecated.class))
+            if (!m.isAnnotationPresent(Deprecated.class) && !m.getName().equals("load") && !m.getName().contains("$")) {
                 m.invoke(null);
+            }
         }
     }
 
