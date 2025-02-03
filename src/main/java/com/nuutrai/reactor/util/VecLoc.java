@@ -16,10 +16,10 @@ import static com.nuutrai.reactor.Reactor.logger;
 
 public class VecLoc implements Serializable {
 
-    public int x;
-    public int y;
-    public int z;
-    public UUID world;
+    private int x;
+    private int y;
+    private int z;
+    private UUID world;
 
     public VecLoc(int x, int y, int z, UUID world) {
         this.world = world;
@@ -46,6 +46,18 @@ public class VecLoc implements Serializable {
 
     public Location toLocation(UUID world) {
         return new Location(getWorld(world), x, y, z);
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
     }
 
     public void setWorld(UUID world) {
