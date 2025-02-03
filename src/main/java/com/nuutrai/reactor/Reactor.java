@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,7 @@ import java.util.logging.Logger;
 
 public final class Reactor extends JavaPlugin {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Reactor.class);
     public static Reactor instance;
     public Ticker ticker;
     public static boolean HALTTICK = false;
@@ -78,6 +80,12 @@ public final class Reactor extends JavaPlugin {
         logger.info("Data folder: " + dataFolder);
 
         WorldManager.init();
+
+        try {
+            registerListeners("com.nuutrai.reactor.listeners");
+        } catch (IOException e) {
+            logger.severe("Something went horribly wrong whilst loading events!");
+        }
 
         // We'll get this working
 //        try {
@@ -116,7 +124,11 @@ public final class Reactor extends JavaPlugin {
 
         /*          */
 
-        RegisterCommands.loadInventoryTest();
+        try {
+            RegisterCommands.load();
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            logger.severe("Something went incredibly wrong whist loading commands!");
+        }
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             ticker.tick();
@@ -135,11 +147,6 @@ public final class Reactor extends JavaPlugin {
 
     }
 
-    @Override
-    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
-        return super.getDefaultWorldGenerator(worldName, id);
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void ensureDataFolder() {
         if (getDataFolder().exists())
@@ -149,7 +156,7 @@ public final class Reactor extends JavaPlugin {
 
     private void registerListeners(String packageName) throws IOException {
         // Get all classes in the specified package using Guava's ClassPath
-        ClassPath classPath = ClassPath.from(Thread.currentThread().getContextClassLoader());
+        ClassPath classPath = ClassPath.from(this.getClassLoader());
         logger.info(classPath.getTopLevelClassesRecursive(packageName).toString());
         logger.info("" + classPath.getTopLevelClassesRecursive(packageName).size());
         for (ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(packageName)) {
