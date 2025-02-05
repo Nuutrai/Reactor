@@ -5,11 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class AdvancedVentEntity extends Sellable {
-
-    public AdvancedVentEntity(Player player, Location position) {
-        super("advanced_vent", Material.IRON_BLOCK, player, position);
-    }
+public class AdvancedVentEntity extends VentEntity {
 
     public AdvancedVentEntity() {
         super("advanced_vent", Material.IRON_BLOCK);

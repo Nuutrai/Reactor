@@ -1,17 +1,17 @@
 package com.nuutrai.reactor.entity;
 
 import com.google.common.collect.Maps;
-import com.google.gson.*;
 import com.nuutrai.reactor.item.Buyable;
+import com.nuutrai.reactor.util.ChangeMode;
 import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.nuutrai.reactor.util.ChangeMode.*;
 
 /**
  *
@@ -32,8 +32,10 @@ public abstract class Sellable {
     private UUID player = null;
     private VecLoc position = null;
     private double currentHealth;
+    private EntityHandler entityHandler;
     private static final Map<String, Sellable> SELLABLES = Maps.newHashMap();
 
+    /*
     public Sellable(String id, Material block, Player player, Location position) {
         this.id = id;
         this.player = player.getUniqueId();
@@ -41,6 +43,7 @@ public abstract class Sellable {
         this.block = block;
         this.maxHealth = getType().getHealth();
     }
+    */
 
     public Sellable(String id, Material block) {
         this.id = id;
@@ -94,17 +97,37 @@ public abstract class Sellable {
         this.currentHealth = currentHealth;
     }
 
-    private double getHeat() {
+    public double getHeat() {
         return getType().getHeat();
     }
 
-    private double getHealth() {
+    public double getHealth() {
         return getType().getHealth();
     }
 
     protected float getHeatToCostRatio() {
         return (float) (getHeat() / getType().getCost());
     }
+
+    public void health(double change, ChangeMode changeMode) {
+        if (changeMode == SET) {
+            currentHealth = change;
+        } else if (changeMode == DECREASE) {
+            currentHealth -= change;
+        } else if (changeMode == ADD) {
+            currentHealth += change;
+        }
+    }
+
+    public EntityHandler getEntityHandler() {
+        return entityHandler;
+    }
+
+    public void setEntityHandler(EntityHandler entityHandler) {
+        this.entityHandler = entityHandler;
+    }
+
+    public abstract void tick(Sellable[] neighbours, double heatPerNeighbour);
 
     public abstract void tick();
 

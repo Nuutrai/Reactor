@@ -7,19 +7,17 @@ import org.bukkit.entity.Player;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
-public class UraniumCellEntity extends Sellable {
-
-    public UraniumCellEntity(Player player, Location position) {
-        super("uranium_single", Material.EMERALD_BLOCK, player, position);
-    }
+public class UraniumCellEntity extends CellEntity {
 
     public UraniumCellEntity() {
         super("uranium_single", Material.EMERALD_BLOCK);
     }
 
     @Override
-    public void tick() {
-        logger.info("Cell at " + this.getPosition().toLocation().getBlockX() + ", " + this.getPosition().toLocation().getBlockY() + ", " + this.getPosition().toLocation().getBlockZ() + " was ticked");
+    public void tick(Sellable[] neighbours, double heatPerNeighbour) {
+        for (Sellable neighbour: neighbours) {
+
+        }
     }
 
     @Override

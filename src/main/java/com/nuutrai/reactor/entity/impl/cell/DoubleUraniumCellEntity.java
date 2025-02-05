@@ -7,11 +7,7 @@ import org.bukkit.entity.Player;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
-public class DoubleUraniumCellEntity extends Sellable {
-
-    public DoubleUraniumCellEntity(Player player, Location position) {
-        super("uranium_double", Material.EMERALD_BLOCK, player, position);
-    }
+public class DoubleUraniumCellEntity extends CellEntity {
 
     public DoubleUraniumCellEntity() {
         super("uranium_double", Material.EMERALD_BLOCK);

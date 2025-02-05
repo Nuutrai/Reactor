@@ -16,6 +16,7 @@ public class EntityHandler implements Serializable {
     private final ArrayList<VecLoc> locations = new ArrayList<>();
 
     public void add(Sellable entity, VecLoc location) {
+        entity.setEntityHandler(this);
         entityMap.put(location, entity);
         locations.add(location);
     }
@@ -36,7 +37,7 @@ public class EntityHandler implements Serializable {
         loc.toLocation().getBlock().setType(block);
     }
 
-    public Sellable getSellable(VecLoc loc) {
+    public Sellable get(VecLoc loc) {
         return entityMap.get(loc);
     }
 
