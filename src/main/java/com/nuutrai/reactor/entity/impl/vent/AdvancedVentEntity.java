@@ -1,9 +1,9 @@
 package com.nuutrai.reactor.entity.impl.vent;
 
 import com.nuutrai.reactor.entity.Sellable;
-import org.bukkit.Location;
+import com.nuutrai.reactor.entity.lang.VentEntity;
+import com.nuutrai.reactor.util.MultiTypeMap;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 public class AdvancedVentEntity extends VentEntity {
 
@@ -12,7 +12,7 @@ public class AdvancedVentEntity extends VentEntity {
     }
 
     @Override
-    public void tick() {
+    public void tick(Sellable[] neighbours, MultiTypeMap params) {
 
     }
 

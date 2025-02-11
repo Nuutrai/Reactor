@@ -1,9 +1,9 @@
 package com.nuutrai.reactor.entity.impl.cell;
 
 import com.nuutrai.reactor.entity.Sellable;
-import org.bukkit.Location;
+import com.nuutrai.reactor.entity.lang.CellEntity;
+import com.nuutrai.reactor.util.MultiTypeMap;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
@@ -14,7 +14,7 @@ public class QuadUraniumCellEntity extends CellEntity {
     }
 
     @Override
-    public void tick() {
+    public void tick(Sellable[] neighbours, MultiTypeMap params) {
         logger.info("Cell at " + this.getPosition().toLocation().getBlockX() + ", " + this.getPosition().toLocation().getBlockY() + ", " + this.getPosition().toLocation().getBlockZ() + " was ticked");
     }
 

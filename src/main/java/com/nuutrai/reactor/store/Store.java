@@ -35,18 +35,18 @@ public class Store {
            items.add(getBackground());
        }
 
+       PlayerData playerData = DataManager.get(player);
+
        ItemStack power = new ItemStack(Material.WIND_CHARGE);
        ItemMeta powerMeta = power.getItemMeta();
-       powerMeta.displayName(Component.text("Power", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
+       powerMeta.displayName(Component.text(playerData.getPower() + " Power", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
        power.setItemMeta(powerMeta);
        items.add(power);
-
-       PlayerData playerData = DataManager.get(player);
 
        items.add(ItemStack.of(Material.AIR));
        ItemStack heat = new ItemStack(Material.BLAZE_POWDER);
        ItemMeta heatMeta = heat.getItemMeta();
-       heatMeta.displayName(Component.text("Heat", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
+       heatMeta.displayName(Component.text(playerData.getHeat() + " Heat", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
        heat.setItemMeta(heatMeta);
        items.add(heat);
 

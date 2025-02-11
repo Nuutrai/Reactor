@@ -123,7 +123,7 @@ public final class Reactor extends JavaPlugin {
     private <T> void registerReactorElements(String subpackageName, Class<T> parentClass) throws IOException {
         ClassPath classPath = ClassPath.from(this.getClassLoader());
 
-        String packageName = "com.nuutrai.reactor." + subpackageName;
+        String packageName = "com.nuutrai.reactor." + subpackageName + ".impl";
 
         for (ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(packageName)) {
             Class<?> clazz = classInfo.load();

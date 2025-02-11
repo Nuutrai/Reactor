@@ -1,9 +1,11 @@
 package com.nuutrai.reactor.entity.impl.vent;
 
 import com.nuutrai.reactor.entity.Sellable;
-import org.bukkit.Location;
+import com.nuutrai.reactor.entity.lang.VentEntity;
+import com.nuutrai.reactor.util.MultiTypeMap;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+
+import static com.nuutrai.reactor.util.ChangeMode.DECREASE;
 
 public class BasicVentEntity extends VentEntity {
 
@@ -12,7 +14,10 @@ public class BasicVentEntity extends VentEntity {
     }
 
     @Override
-    public void tick() {
+    public void tick(Sellable[] neighbours, MultiTypeMap params) {
+
+        System.out.printf("Decreased health of %s from %s to %s%n", getPosition().toString(), getHealth(), getHealth() - getHeat());
+        health(getHeat(), DECREASE);
 
     }
 

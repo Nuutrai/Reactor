@@ -33,7 +33,7 @@ public class DataManager {
 
         JsonObject json = gson.fromJson(jsonString, JsonObject.class);
 
-        PlayerDataWrapper playerDataWrapper = JSONConversion.playerDataFromJson(json);
+        PlayerDataWrapper playerDataWrapper = JSONConversion.playerDataFromJson(json, player);
         PlayerData playerData = new PlayerData(playerDataWrapper);
         playerData.setPlayer(player);
         playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);

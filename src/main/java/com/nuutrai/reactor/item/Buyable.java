@@ -35,7 +35,7 @@ public abstract class Buyable {
     private final String name;
     private final String description;
     private double heat;
-    private double power;
+    private int power;
     private final ItemStack item;
     /**
      *  Health represents both durability & heat content.
@@ -44,7 +44,7 @@ public abstract class Buyable {
 
     private static final Map<String, Buyable> BUYABLES = Maps.newHashMap();
 
-    public Buyable(String id, int cost, String name, String description, double heat, double power, double health, ItemStack item) {
+    public Buyable(String id, int cost, String name, String description, double heat, int power, double health, ItemStack item) {
         this.id = id;
         this.cost = cost;
         this.name = name;
@@ -55,7 +55,7 @@ public abstract class Buyable {
         this.health = health;
     }
 
-    public Buyable(String id, int cost, String name, String description, double heat, double power, double health, NamedTextColor colour, Material item) {
+    public Buyable(String id, int cost, String name, String description, double heat, int power, double health, NamedTextColor colour, Material item) {
         this.heat = heat;
         this.health = health;
         this.power = power;
@@ -104,7 +104,7 @@ public abstract class Buyable {
         return item;
     }
 
-    public double getPower() {
+    public int getPower() {
         return power;
     }
 

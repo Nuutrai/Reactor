@@ -21,7 +21,7 @@ public class PlayerData implements Serializable {
 
     private int balance = 0;
     private EntityHandler entities = new EntityHandler();
-    private int heat = 0;
+    private double heat = 0;
     private int power = 0;
     public  ItemStack selection = ItemStack.of(Material.AIR);
     private boolean isPaused = true;
@@ -48,6 +48,14 @@ public class PlayerData implements Serializable {
         this.balance = balance;
     }
 
+    public void addBalance(int by) {
+        this.balance += by;
+    }
+
+    public void removeBalance(int by) {
+        this.balance += by;
+    }
+
     public void addEntity(Sellable s, VecLoc location) {
         entities.add(s, location);
     }
@@ -68,11 +76,15 @@ public class PlayerData implements Serializable {
         this.power += power;
     }
 
-    public int getHeat() {
+    public double getHeat() {
         return heat;
     }
 
-    public void setHeat(int heat) {
+    public void addHeat(double heat) {
+        this.heat += heat;
+    }
+    
+    public void setHeat(double heat) {
         this.heat = heat;
     }
 
@@ -112,6 +124,12 @@ public class PlayerData implements Serializable {
         Bukkit.getScheduler().runTask(instance, () -> {
             player.getInventory().setItem(40, determinePauseItem());
         });
+
+        update();
+        
+    }
+
+    private void update() {
 
     }
 

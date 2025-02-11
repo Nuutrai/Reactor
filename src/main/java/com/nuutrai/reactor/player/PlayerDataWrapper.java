@@ -12,7 +12,7 @@ public class PlayerDataWrapper implements Serializable {
     private int balance = 0;
     private HashMap<VecLoc, Sellable> entities;
     private ArrayList<VecLoc> locations;
-    private int heat = 0;
+    private double heat = 0;
     private int power = 0;
 
     public PlayerDataWrapper(PlayerData pd) {
@@ -35,7 +35,7 @@ public class PlayerDataWrapper implements Serializable {
         return balance;
     }
 
-    public int getHeat() {
+    public double getHeat() {
         return heat;
     }
 

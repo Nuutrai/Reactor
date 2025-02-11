@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.player.PlayerDataWrapper;
 import com.nuutrai.reactor.util.VecLoc;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -43,7 +44,7 @@ public class JSONConversion {
         for (Sellable s: sellableCollection) {
             JsonObject entry = new JsonObject();
             entry.addProperty("id", s.getId());
-            entry.addProperty("player", s.getPlayer().toString());
+//            entry.addProperty("player", s.getPlayer().toString());
             entry.addProperty("currentHealth", s.getCurrentHealth());
             entry.add("position", vecLocToJson(Collections.singleton(s.getPosition())));
 
@@ -63,7 +64,7 @@ public class JSONConversion {
             entry.addProperty("x", vecLoc.getX());
             entry.addProperty("y", vecLoc.getY());
             entry.addProperty("z", vecLoc.getZ());
-            entry.addProperty("world", vecLoc.getUUID().toString());
+//            entry.addProperty("world", vecLoc.getUUID().toString());
 
             vecLocJson.add(entry);
         }
@@ -72,7 +73,7 @@ public class JSONConversion {
 
     }
 
-    public static PlayerDataWrapper playerDataFromJson(JsonObject json) {
+    public static PlayerDataWrapper playerDataFromJson(JsonObject json, Player player) {
         int balance = json.get("balance").getAsInt();
         int heat = json.get("heat").getAsInt();
         int power = json.get("power").getAsInt();
@@ -84,12 +85,12 @@ public class JSONConversion {
         JsonObject entitiesObject = json.getAsJsonObject("entities");
 
         for (JsonElement locElement : locationsArray) {
-            VecLoc vecLoc = vecLocFromJson(locElement.getAsJsonArray()).getFirst();
+            VecLoc vecLoc = vecLocFromJson(locElement.getAsJsonArray(), player).getFirst();
             locationsSet.add(vecLoc);
 
             String hash = String.valueOf(vecLoc.hashCode());
             if (entitiesObject.has(hash)) {
-                Sellable sellable = sellableFromJson(entitiesObject.getAsJsonArray(hash)).getFirst();
+                Sellable sellable = sellableFromJson(entitiesObject.getAsJsonArray(hash), player).getFirst();
                 entityMap.put(vecLoc, sellable);
             }
         }
@@ -97,20 +98,20 @@ public class JSONConversion {
         return new PlayerDataWrapper(balance, entityMap, locationsSet, heat, power);
     }
 
-    public static List<Sellable> sellableFromJson(JsonArray json) {
+    public static List<Sellable> sellableFromJson(JsonArray json, Player player) {
         List<Sellable> sellables = new ArrayList<>();
 
         for (JsonElement sellableElement: json) {
             JsonObject sellableObject = sellableElement.getAsJsonObject();
 
             String id = sellableObject.get("id").getAsString();
-            String uuidAsString = sellableObject.get("player").getAsString();
-            UUID uuid = UUID.fromString(uuidAsString);
+//            String uuidAsString = sellableObject.get("player").getAsString();
+//            UUID uuid = UUID.fromString(uuidAsString);
             double currentHealth = sellableObject.get("currentHealth").getAsDouble();
-            VecLoc position = vecLocFromJson((JsonArray) sellableObject.get("position")).getFirst();
+            VecLoc position = vecLocFromJson((JsonArray) sellableObject.get("position"), player).getFirst();
 
             Sellable s = Sellable.get(id);
-            Sellable sellable = Sellable.create(s, uuid, position);
+            Sellable sellable = Sellable.create(s, player, position);
             sellable.setCurrentHealth(currentHealth);
 
             sellables.add(sellable);
@@ -121,7 +122,7 @@ public class JSONConversion {
 
     }
 
-    public static List<VecLoc> vecLocFromJson(JsonArray json) {
+    public static List<VecLoc> vecLocFromJson(JsonArray json, Player player) {
         List<VecLoc> vecLocs = new ArrayList<>();
 
         for (JsonElement vecLoc : json) {
@@ -129,10 +130,10 @@ public class JSONConversion {
             int x = vecLocObject.get("x").getAsInt();
             int y = vecLocObject.get("y").getAsInt();
             int z = vecLocObject.get("z").getAsInt();
-            String uuidAsString = vecLocObject.get("world").getAsString();
-            UUID uuid = UUID.fromString(uuidAsString);
+//            String uuidAsString = vecLocObject.get("world").getAsString();
+//            UUID uuid = UUID.fromString(uuidAsString);
 
-            vecLocs.add(new VecLoc(x, y, z, uuid));
+            vecLocs.add(new VecLoc(x, y, z, player.getUniqueId()));
         }
 
         return vecLocs;

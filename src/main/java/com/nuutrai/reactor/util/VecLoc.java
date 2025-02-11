@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
 
 import static com.nuutrai.reactor.Reactor.logger;
 
@@ -75,10 +76,10 @@ public class VecLoc implements Serializable {
     public List<VecLoc> getNeighbours() {
         ArrayList<VecLoc> locs = new ArrayList<>();
 
-        locs.add(new VecLoc(x, y, z+1, world));
-        locs.add(new VecLoc(x, y, z-1, world));
         locs.add(new VecLoc(x+1, y, z, world));
         locs.add(new VecLoc(x-1, y, z, world));
+        locs.add(new VecLoc(x, y, z+1, world));
+        locs.add(new VecLoc(x, y, z-1, world));
 
         return locs;
 
@@ -115,4 +116,10 @@ public class VecLoc implements Serializable {
     public int hashCode() {
         return Objects.hash(x, y, z, world);
     }
+
+    @Override
+    public String toString() {
+        return String.format("VecLoc@%s,%s,%s", getX(), getY(), getZ());
+    }
+
 }

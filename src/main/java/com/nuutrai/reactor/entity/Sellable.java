@@ -3,13 +3,13 @@ package com.nuutrai.reactor.entity;
 import com.google.common.collect.Maps;
 import com.nuutrai.reactor.item.Buyable;
 import com.nuutrai.reactor.util.ChangeMode;
+import com.nuutrai.reactor.util.MultiTypeMap;
 import com.nuutrai.reactor.util.VecLoc;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
-import java.util.UUID;
 
 import static com.nuutrai.reactor.util.ChangeMode.*;
 
@@ -29,7 +29,7 @@ public abstract class Sellable {
     private final String id;
     private final Material block;
     private final double maxHealth;
-    private UUID player = null;
+    private Player player = null;
     private VecLoc position = null;
     private double currentHealth;
     private EntityHandler entityHandler;
@@ -52,18 +52,13 @@ public abstract class Sellable {
     }
 
     public static Sellable create(Sellable sellable, Player player, Location position) {
-        UUID uuid = player.getUniqueId();
-        return create(sellable, uuid, new VecLoc(position, uuid));
+        return create(sellable, player, new VecLoc(position, player.getUniqueId()));
     }
 
     public static Sellable create(Sellable sellable, Player player, VecLoc position) {
-        return create(sellable, player.getUniqueId(), position);
-    }
-
-    public static Sellable create(Sellable sellable, UUID uuid, VecLoc position) {
         Sellable s = sellable.clone();
 
-        s.player = uuid;
+        s.player = player;
         s.position = position;
 
         return s;
@@ -83,6 +78,10 @@ public abstract class Sellable {
 
     public Buyable getType() {
         return Buyable.get(id);
+    }
+
+    public int getPower() {
+        return getType().getPower();
     }
 
     public Material getBlock() {
@@ -109,13 +108,13 @@ public abstract class Sellable {
         return (float) (getHeat() / getType().getCost());
     }
 
-    public void health(double change, ChangeMode changeMode) {
+    public void health(double by, ChangeMode changeMode) {
         if (changeMode == SET) {
-            currentHealth = change;
+            currentHealth = by;
         } else if (changeMode == DECREASE) {
-            currentHealth -= change;
+            currentHealth -= by;
         } else if (changeMode == ADD) {
-            currentHealth += change;
+            currentHealth += by;
         }
     }
 
@@ -127,7 +126,7 @@ public abstract class Sellable {
         this.entityHandler = entityHandler;
     }
 
-    public abstract void tick(Sellable[] neighbours, double heatPerNeighbour);
+    public abstract void tick(Sellable[] neighbours, MultiTypeMap params);
 
     public abstract void tick();
 
@@ -155,7 +154,7 @@ public abstract class Sellable {
         return maxHealth;
     }
 
-    public UUID getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 

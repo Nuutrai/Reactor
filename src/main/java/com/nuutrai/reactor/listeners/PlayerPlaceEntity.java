@@ -94,7 +94,7 @@ public class PlayerPlaceEntity implements Listener {
     public static void breakEntity(Player p, VecLoc vecloc) {
         PlayerData pd = DataManager.get(p);
 
-        if (pd.getEntities().getSellable(vecloc) == null) {
+        if (pd.getEntities().get(vecloc) == null) {
             p.getInventory().setItem(4, ItemStack.of(Material.AIR));
             return;
         }
