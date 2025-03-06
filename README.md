@@ -1,3 +1,3 @@
-# reactor
+# Reactor
 
 # A Minecraft minigame
