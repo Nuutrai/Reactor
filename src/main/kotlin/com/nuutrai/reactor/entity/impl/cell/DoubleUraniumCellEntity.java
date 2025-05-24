@@ -5,6 +5,8 @@ import com.nuutrai.reactor.entity.Sellable;
 import com.nuutrai.reactor.entity.lang.CellEntity;
 import com.nuutrai.reactor.util.MultiTypeMap;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.util.RayTraceResult;
 
 public class DoubleUraniumCellEntity extends CellEntity implements Pairable {
 
@@ -15,7 +17,7 @@ public class DoubleUraniumCellEntity extends CellEntity implements Pairable {
     @Override
     public void tick(Sellable[] neighbours, MultiTypeMap params) {
 
-
+        World
 
     }
 

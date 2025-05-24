@@ -27,7 +27,7 @@ public class JSONConversion {
         for (VecLoc vecLoc: pd.getLocations()) {
             String hash = String.valueOf(vecLoc.hashCode());
             Sellable s = entityMap.get(vecLoc);
-            locations.add(vecLocToJson(Collections.singleton(vecLoc)));
+            locations.add(vecLocToJson(vecLoc));
             entities.add(hash, sellableToJson(Collections.singleton(s)));
         }
 
@@ -46,7 +46,7 @@ public class JSONConversion {
             entry.addProperty("id", s.getId());
 //            entry.addProperty("player", s.getPlayer().toString());
             entry.addProperty("currentHealth", s.getCurrentHealth());
-            entry.add("position", vecLocToJson(Collections.singleton(s.getPosition())));
+            entry.add("position", vecLocToJson(s.getPosition()));
 
             sellableJson.add(entry);
 
@@ -56,18 +56,16 @@ public class JSONConversion {
 
     }
 
-    public static JsonArray vecLocToJson(Collection<VecLoc> vecLocs) {
+    public static JsonArray vecLocToJson(VecLoc vecLoc) {
         JsonArray vecLocJson = new JsonArray();
 
-        for (VecLoc vecLoc: vecLocs) {
-            JsonObject entry = new JsonObject();
-            entry.addProperty("x", vecLoc.getX());
-            entry.addProperty("y", vecLoc.getY());
-            entry.addProperty("z", vecLoc.getZ());
-//            entry.addProperty("world", vecLoc.getUUID().toString());
+        JsonObject entry = new JsonObject();
+        entry.addProperty("x", vecLoc.getX());
+        entry.addProperty("y", vecLoc.getY());
+        entry.addProperty("z", vecLoc.getZ());
+//        entry.addProperty("world", vecLoc.getUUID().toString());
 
-            vecLocJson.add(entry);
-        }
+        vecLocJson.add(entry);
 
         return vecLocJson;
 
