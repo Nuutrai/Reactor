@@ -1,10 +1,7 @@
-package com.nuutrai.reactor.util;
+package com.nuutrai.reactor.util
 
-public enum ChangeMode {
-
-    SET,
-    DECREASE,
-    ADD,
-
-
+enum class ChangeMode {
+	SET,
+	DECREASE,
+	ADD,
 }

@@ -1,33 +1,21 @@
-package com.nuutrai.reactor.entity.impl.vent;
+package com.nuutrai.reactor.entity.impl.vent
 
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.entity.lang.VentEntity;
-import com.nuutrai.reactor.util.MultiTypeMap;
-import org.bukkit.Material;
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.entity.lang.VentEntity
+import com.nuutrai.reactor.util.MultiTypeMap
+import org.bukkit.Material
 
-public class AdvancedVentEntity extends VentEntity {
+class AdvancedVentEntity : VentEntity("advanced_vent", Material.IRON_BLOCK) {
+	override fun tick(neighbours: Array<Sellable>?, params: MultiTypeMap?) {
+	}
 
-    public AdvancedVentEntity() {
-        super("advanced_vent", Material.IRON_BLOCK);
-    }
+	override val sellAmount: Double
+		get() = 0.0
 
-    @Override
-    public void tick(Sellable[] neighbours, MultiTypeMap params) {
+	override fun sell() {
+	}
 
-    }
-
-    @Override
-    public double getSellAmount() {
-        return 0;
-    }
-
-    @Override
-    public void sell() {
-
-    }
-
-    @Override
-    public Sellable clone() {
-        return new AdvancedVentEntity();
-    }
+	override fun clone(): Sellable {
+		return AdvancedVentEntity()
+	}
 }

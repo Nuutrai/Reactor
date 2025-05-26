@@ -1,155 +1,112 @@
-package com.nuutrai.reactor.player;
+package com.nuutrai.reactor.player
 
-import com.nuutrai.reactor.entity.EntityHandler;
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.util.VecLoc;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import com.nuutrai.reactor.Reactor
+import com.nuutrai.reactor.entity.EntityHandler
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.util.VecLoc
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import java.io.Serializable
 
-import java.io.Serializable;
+class PlayerData : Serializable {
+    var balance: Int = 0
+    val entities: EntityHandler = EntityHandler()
+	var heat: Double = 0.0
+	var power: Int = 0
+    var selection: ItemStack = ItemStack.of(Material.AIR)
+    var isPaused: Boolean = true
+	private var player: Player? = null
 
-import static com.nuutrai.reactor.Reactor.instance;
+	constructor()
 
-public class PlayerData implements Serializable {
+	constructor(playerDataWrapper: PlayerDataWrapper) {
+		this.balance = playerDataWrapper.balance
+		this.heat = playerDataWrapper.heat
+		this.power = playerDataWrapper.power
+		for (loc in playerDataWrapper.locations!!) {
+			val s = playerDataWrapper.entities!!.get(loc)
+			this.entities.add(s, loc)
+		}
+	}
 
-    private int balance = 0;
-    private EntityHandler entities = new EntityHandler();
-    private double heat = 0;
-    private int power = 0;
-    public  ItemStack selection = ItemStack.of(Material.AIR);
-    private boolean isPaused = true;
-    private Player player;
+	fun addBalance(by: Int) {
+		this.balance += by
+	}
 
-    public PlayerData() {
-    }
+	fun removeBalance(by: Int) {
+		this.balance += by
+	}
 
-    public PlayerData(PlayerDataWrapper playerDataWrapper) {
-        this.balance = playerDataWrapper.getBalance();
-        this.heat = playerDataWrapper.getHeat();
-        this.power = playerDataWrapper.getPower();
-        for (VecLoc loc: playerDataWrapper.getLocations()) {
-            Sellable s = playerDataWrapper.getEntities().get(loc);
-            this.entities.add(s, loc);
-        }
-    }
+	fun addEntity(s: Sellable, location: VecLoc?) {
+		entities.add(s, location)
+	}
 
-    public int getBalance() {
-        return balance;
-    }
+	fun removeEntity(location: VecLoc?) {
+		entities.remove(location)
+	}
 
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
+	fun addPower(power: Int) {
+		this.power += power
+	}
 
-    public void addBalance(int by) {
-        this.balance += by;
-    }
+	fun addHeat(heat: Double) {
+		this.heat += heat
+	}
 
-    public void removeBalance(int by) {
-        this.balance += by;
-    }
+	fun loadAllEntities() {
+		entities.place()
+	}
 
-    public void addEntity(Sellable s, VecLoc location) {
-        entities.add(s, location);
-    }
+	fun loadEntity(loc: VecLoc?) {
+		entities.place(loc)
+	}
 
-    public void removeEntity(VecLoc location) {
-        entities.remove(location);
-    }
+	fun loadEntity(loc: Location) {
+		loadEntity(VecLoc(loc, player!!.uniqueId))
+	}
 
-    public int getPower() {
-        return power;
-    }
+	fun getPlayer(): Player {
+		return player!!
+	}
 
-    public void setPower(int power) {
-        this.power = power;
-    }
+	fun setPlayer(player: Player) {
+		this.player = player
+	}
 
-    public void addPower(int power) {
-        this.power += power;
-    }
+	fun tick() {
+		if (!this.isPaused) {
+			entities.tick()
+		}
 
-    public double getHeat() {
-        return heat;
-    }
+		Bukkit.getScheduler().runTask(Reactor.Companion.instance!!, Runnable {
+			player!!.inventory.setItem(40, determinePauseItem())
+		})
 
-    public void addHeat(double heat) {
-        this.heat += heat;
-    }
-    
-    public void setHeat(double heat) {
-        this.heat = heat;
-    }
+		update()
+	}
 
-    public EntityHandler getEntities() {
-        return entities;
-    }
+	private fun update() {
+	}
 
-    public void setPaused(boolean pause) {
-        isPaused = pause;
-    }
+	fun determinePauseItem(): ItemStack {
+		val pause: ItemStack
+		var pauseColour = NamedTextColor.RED
+		if (this.isPaused) {
+			pause = ItemStack.of(Material.FIREWORK_STAR)
+			pauseColour = NamedTextColor.GRAY
+		} else {
+			pause = ItemStack.of(Material.FIRE_CHARGE)
+		}
 
-    public void loadAllEntities() {
-        entities.place();
-    }
-
-    public void loadEntity(VecLoc loc) {
-        entities.place(loc);
-    }
-
-    public void loadEntity(Location loc) {
-        loadEntity(new VecLoc(loc, player.getUniqueId()));
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public void tick() {
-        if (!isPaused()) {
-            entities.tick();
-        }
-
-        Bukkit.getScheduler().runTask(instance, () -> {
-            player.getInventory().setItem(40, determinePauseItem());
-        });
-
-        update();
-        
-    }
-
-    private void update() {
-
-    }
-
-    public ItemStack determinePauseItem() {
-        ItemStack pause;
-        NamedTextColor pauseColour = NamedTextColor.RED;
-        if (isPaused()) {
-            pause = ItemStack.of(Material.FIREWORK_STAR);
-            pauseColour = NamedTextColor.GRAY;
-        } else {
-            pause = ItemStack.of(Material.FIRE_CHARGE);
-        }
-
-        ItemMeta pauseMeta = pause.getItemMeta();
-        pauseMeta.displayName(Component.text("Pause", pauseColour).decoration(TextDecoration.ITALIC, false));
-        pause.setItemMeta(pauseMeta);
-        return pause;
-    }
-
-    public boolean isPaused() {
-        return isPaused;
-    }
+		val pauseMeta = pause.itemMeta
+		pauseMeta.displayName(Component.text("Pause", pauseColour).decoration(TextDecoration.ITALIC, false))
+		pause.setItemMeta(pauseMeta)
+		return pause
+	}
 }

@@ -1,39 +1,23 @@
-package com.nuutrai.reactor.entity.impl.cell;
+package com.nuutrai.reactor.entity.impl.cell
 
-import com.nuutrai.reactor.entity.Pairable;
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.entity.lang.CellEntity;
-import com.nuutrai.reactor.util.MultiTypeMap;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.util.RayTraceResult;
+import com.nuutrai.reactor.entity.Pairable
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.entity.lang.CellEntity
+import com.nuutrai.reactor.util.MultiTypeMap
+import org.bukkit.Material
 
-public class DoubleUraniumCellEntity extends CellEntity implements Pairable {
+class DoubleUraniumCellEntity : CellEntity("uranium_double", Material.EMERALD_BLOCK), Pairable {
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?) {
+		TODO()
+	}
 
-    public DoubleUraniumCellEntity() {
-        super("uranium_double", Material.EMERALD_BLOCK);
-    }
+	override val sellAmount: Double
+		get() = 0.0
 
-    @Override
-    public void tick(Sellable[] neighbours, MultiTypeMap params) {
+	override fun sell() {
+	}
 
-        World
-
-    }
-
-    @Override
-    public double getSellAmount() {
-        return 0;
-    }
-
-    @Override
-    public void sell() {
-
-    }
-
-    @Override
-    public Sellable clone() {
-        return new DoubleUraniumCellEntity();
-    }
-
+	override fun clone(): Sellable {
+		return DoubleUraniumCellEntity()
+	}
 }

@@ -1,141 +1,123 @@
-package com.nuutrai.reactor.data;
+package com.nuutrai.reactor.data
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.player.PlayerDataWrapper;
-import com.nuutrai.reactor.util.VecLoc;
-import org.bukkit.entity.Player;
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.entity.Sellable.Companion.get
+import com.nuutrai.reactor.player.PlayerDataWrapper
+import com.nuutrai.reactor.util.VecLoc
+import org.bukkit.entity.Player
 
-import java.util.*;
+object JSONConversion {
 
-public class JSONConversion {
+	fun playerDataToJson(pd: PlayerDataWrapper): JsonObject {
+		val playerDataJson = JsonObject()
 
-    public static JsonObject playerDataToJson(PlayerDataWrapper pd) {
-        JsonObject playerDataJson = new JsonObject();
+		playerDataJson.addProperty("balance", pd.balance)
+		playerDataJson.addProperty("heat", pd.heat)
+		playerDataJson.addProperty("power", pd.power)
 
-        playerDataJson.addProperty("balance", pd.getBalance());
-        playerDataJson.addProperty("heat", pd.getHeat());
-        playerDataJson.addProperty("power", pd.getPower());
+		val entityMap = pd.entities
 
-        HashMap<VecLoc, Sellable> entityMap = pd.getEntities();
+		val locations = JsonArray()
+		val entities = JsonObject()
 
-        JsonArray locations = new JsonArray();
-        JsonObject entities = new JsonObject();
+		for (vecLoc in pd.locations!!) {
+			val hash = vecLoc.hashCode().toString()
+			val s = entityMap!!.get(vecLoc) ?: continue
+			locations.add(vecLocToJson(vecLoc!!))
+			entities.add(hash, JSONConversion.sellableToJson(s))
+		}
 
-        for (VecLoc vecLoc: pd.getLocations()) {
-            String hash = String.valueOf(vecLoc.hashCode());
-            Sellable s = entityMap.get(vecLoc);
-            locations.add(vecLocToJson(vecLoc));
-            entities.add(hash, sellableToJson(Collections.singleton(s)));
-        }
+		playerDataJson.add("entities", entities)
+		playerDataJson.add("locations", locations)
 
-        playerDataJson.add("entities", entities);
-        playerDataJson.add("locations", locations);
+		return playerDataJson
+	}
 
-        return playerDataJson;
-    }
+	fun sellableToJson(sellable: Sellable): JsonArray {
+		val sellableJson = JsonArray()
 
-    public static JsonArray sellableToJson(Collection<Sellable> sellableCollection) {
+		val entry = JsonObject()
+		entry.addProperty("id", sellable.id)
+		//            entry.addProperty("player", s.getPlayer().toString());
+		entry.addProperty("currentHealth", sellable.currentHealth)
+		entry.add("position", vecLocToJson(sellable.position!!))
 
-        JsonArray sellableJson = new JsonArray();
+		sellableJson.add(entry)
 
-        for (Sellable s: sellableCollection) {
-            JsonObject entry = new JsonObject();
-            entry.addProperty("id", s.getId());
-//            entry.addProperty("player", s.getPlayer().toString());
-            entry.addProperty("currentHealth", s.getCurrentHealth());
-            entry.add("position", vecLocToJson(s.getPosition()));
+		return sellableJson
+	}
 
-            sellableJson.add(entry);
+	fun vecLocToJson(vecLoc: VecLoc): JsonArray {
+		val vecLocJson = JsonArray()
 
-        }
+		val entry = JsonObject()
+		entry.addProperty("x", vecLoc.x)
+		entry.addProperty("y", vecLoc.y)
+		entry.addProperty("z", vecLoc.z)
 
-        return sellableJson;
+		//        entry.addProperty("world", vecLoc.getUUID().toString());
+		vecLocJson.add(entry)
 
-    }
+		return vecLocJson
+	}
 
-    public static JsonArray vecLocToJson(VecLoc vecLoc) {
-        JsonArray vecLocJson = new JsonArray();
+	fun playerDataFromJson(json: JsonObject, player: Player): PlayerDataWrapper {
+		val balance = json.get("balance").asInt
+		val heat = json.get("heat").asInt
+		val power = json.get("power").asInt
 
-        JsonObject entry = new JsonObject();
-        entry.addProperty("x", vecLoc.getX());
-        entry.addProperty("y", vecLoc.getY());
-        entry.addProperty("z", vecLoc.getZ());
-//        entry.addProperty("world", vecLoc.getUUID().toString());
+		val entityMap = HashMap<VecLoc?, Sellable?>()
+		val locationsSet = ArrayList<VecLoc?>()
 
-        vecLocJson.add(entry);
+		val locationsArray = json.getAsJsonArray("locations")
+		val entitiesObject = json.getAsJsonObject("entities")
 
-        return vecLocJson;
+		for (locElement in locationsArray) {
+			val vecLoc: VecLoc = vecLocFromJson(locElement.getAsJsonArray(), player)
+			locationsSet.add(vecLoc)
 
-    }
+			val hash = vecLoc.hashCode().toString()
+			if (entitiesObject.has(hash)) {
+				val sellable: Sellable? = sellableFromJson(entitiesObject.getAsJsonArray(hash), player)
+				entityMap.put(vecLoc, sellable)
+			}
+		}
 
-    public static PlayerDataWrapper playerDataFromJson(JsonObject json, Player player) {
-        int balance = json.get("balance").getAsInt();
-        int heat = json.get("heat").getAsInt();
-        int power = json.get("power").getAsInt();
+		return PlayerDataWrapper(balance, entityMap, locationsSet, heat, power)
+	}
 
-        HashMap<VecLoc, Sellable> entityMap = new HashMap<>();
-        ArrayList<VecLoc> locationsSet = new ArrayList<>();
+	fun sellableFromJson(sellableElement: JsonElement, player: Player): Sellable {
 
-        JsonArray locationsArray = json.getAsJsonArray("locations");
-        JsonObject entitiesObject = json.getAsJsonObject("entities");
+		val sellableObject = sellableElement.getAsJsonObject()
 
-        for (JsonElement locElement : locationsArray) {
-            VecLoc vecLoc = vecLocFromJson(locElement.getAsJsonArray(), player).getFirst();
-            locationsSet.add(vecLoc);
-
-            String hash = String.valueOf(vecLoc.hashCode());
-            if (entitiesObject.has(hash)) {
-                Sellable sellable = sellableFromJson(entitiesObject.getAsJsonArray(hash), player).getFirst();
-                entityMap.put(vecLoc, sellable);
-            }
-        }
-
-        return new PlayerDataWrapper(balance, entityMap, locationsSet, heat, power);
-    }
-
-    public static List<Sellable> sellableFromJson(JsonArray json, Player player) {
-        List<Sellable> sellables = new ArrayList<>();
-
-        for (JsonElement sellableElement: json) {
-            JsonObject sellableObject = sellableElement.getAsJsonObject();
-
-            String id = sellableObject.get("id").getAsString();
-//            String uuidAsString = sellableObject.get("player").getAsString();
+		val id = sellableObject.get("id").asString
+		//            String uuidAsString = sellableObject.get("player").getAsString();
 //            UUID uuid = UUID.fromString(uuidAsString);
-            double currentHealth = sellableObject.get("currentHealth").getAsDouble();
-            VecLoc position = vecLocFromJson((JsonArray) sellableObject.get("position"), player).getFirst();
+		val currentHealth = sellableObject.get("currentHealth").asDouble
+		val position: VecLoc? =
+			vecLocFromJson(sellableObject.get("position"), player)
 
-            Sellable s = Sellable.get(id);
-            Sellable sellable = Sellable.create(s, player, position);
-            sellable.setCurrentHealth(currentHealth);
+		val s = get(id)
+		val sellable = Sellable.create(s!!, player, position)
+		sellable.currentHealth = currentHealth
 
-            sellables.add(sellable);
 
-        }
+		return sellable
+	}
 
-        return sellables;
+	fun vecLocFromJson(vecLoc: JsonElement, player: Player): VecLoc {
 
-    }
+			val vecLocObject = vecLoc.getAsJsonObject()
+			val x = vecLocObject.get("x").asInt
+			val y = vecLocObject.get("y").asInt
+			val z = vecLocObject.get("z").asInt
 
-    public static List<VecLoc> vecLocFromJson(JsonArray json, Player player) {
-        List<VecLoc> vecLocs = new ArrayList<>();
-
-        for (JsonElement vecLoc : json) {
-            JsonObject vecLocObject = vecLoc.getAsJsonObject();
-            int x = vecLocObject.get("x").getAsInt();
-            int y = vecLocObject.get("y").getAsInt();
-            int z = vecLocObject.get("z").getAsInt();
-//            String uuidAsString = vecLocObject.get("world").getAsString();
+			//            String uuidAsString = vecLocObject.get("world").getAsString();
 //            UUID uuid = UUID.fromString(uuidAsString);
 
-            vecLocs.add(new VecLoc(x, y, z, player.getUniqueId()));
-        }
-
-        return vecLocs;
-
-    }
-
+		return VecLoc(x, y, z, player.uniqueId)
+	}
 }

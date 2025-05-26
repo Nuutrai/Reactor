@@ -1,34 +1,31 @@
-package com.nuutrai.reactor.listeners;
+package com.nuutrai.reactor.listeners
 
-import com.nuutrai.reactor.data.DataManager;
-import com.nuutrai.reactor.store.Store;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import com.nuutrai.reactor.Reactor
+import com.nuutrai.reactor.data.DataManager
+import com.nuutrai.reactor.store.Store.setup
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.entity.PlayerDeathEvent
 
-import static com.nuutrai.reactor.Reactor.instance;
+class PlayerDeath : Listener {
+	@EventHandler
+	fun onPlayerDeath(e: PlayerDeathEvent) {
+		e.droppedExp = 0
 
-public class PlayerDeath implements Listener {
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent e) {
-        e.setDroppedExp(0);
+		DataManager.loadPlayerData(e.player)
 
-        DataManager.loadPlayerData(e.getPlayer());
+		val p = e.player
 
-        Player p = e.getPlayer();
+		setup(p)
 
-        Store.setup(p);
-
-        World world = DataManager.get(p).getPlayer().getWorld();
-        Bukkit.getScheduler().runTask(instance, () -> {
-            Bukkit.getScheduler().runTaskLater(instance, () -> {
-                p.teleport(new Location(world, 0, 121, 0));
-                p.setAllowFlight(true);
-            }, 20);
-        });
-    }
+		val world = DataManager.get(p)?.getPlayer()?.world ?: return
+		Bukkit.getScheduler().runTask(Reactor.Companion.instance!!, Runnable {
+			Bukkit.getScheduler().runTaskLater(Reactor.Companion.instance!!, Runnable {
+				p.teleport(Location(world, 0.0, 121.0, 0.0))
+				p.allowFlight = true
+			}, 20)
+		})
+	}
 }

@@ -1,38 +1,24 @@
-package com.nuutrai.reactor.entity.impl.vent;
+package com.nuutrai.reactor.entity.impl.vent
 
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.entity.lang.VentEntity;
-import com.nuutrai.reactor.util.MultiTypeMap;
-import org.bukkit.Material;
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.entity.lang.VentEntity
+import com.nuutrai.reactor.util.ChangeMode
+import com.nuutrai.reactor.util.MultiTypeMap
+import org.bukkit.Material
 
-import static com.nuutrai.reactor.util.ChangeMode.DECREASE;
+class BasicVentEntity : VentEntity("basic_vent", Material.IRON_BLOCK) {
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?) {
+		System.out.printf("Decreased health of %s from %s to %s%n", position.toString(), health, health - heat)
+		health(heat, ChangeMode.DECREASE)
+	}
 
-public class BasicVentEntity extends VentEntity {
+	override val sellAmount: Double
+		get() = 0.0
 
-    public BasicVentEntity() {
-        super("basic_vent", Material.IRON_BLOCK);
-    }
+	override fun sell() {
+	}
 
-    @Override
-    public void tick(Sellable[] neighbours, MultiTypeMap params) {
-
-        System.out.printf("Decreased health of %s from %s to %s%n", getPosition().toString(), getHealth(), getHealth() - getHeat());
-        health(getHeat(), DECREASE);
-
-    }
-
-    @Override
-    public double getSellAmount() {
-        return 0;
-    }
-
-    @Override
-    public void sell() {
-
-    }
-
-    @Override
-    public Sellable clone() {
-        return new BasicVentEntity();
-    }
+	override fun clone(): Sellable {
+		return BasicVentEntity()
+	}
 }

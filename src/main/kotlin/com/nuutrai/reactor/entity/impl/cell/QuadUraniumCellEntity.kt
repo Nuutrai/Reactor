@@ -1,35 +1,26 @@
-package com.nuutrai.reactor.entity.impl.cell;
+package com.nuutrai.reactor.entity.impl.cell
 
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.entity.lang.CellEntity;
-import com.nuutrai.reactor.util.MultiTypeMap;
-import org.bukkit.Material;
+import com.nuutrai.reactor.Reactor
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.entity.lang.CellEntity
+import com.nuutrai.reactor.util.MultiTypeMap
+import org.bukkit.Material
 
-import static com.nuutrai.reactor.Reactor.logger;
+class QuadUraniumCellEntity : CellEntity("uranium_quad", Material.EMERALD_BLOCK) {
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?) {
+		Reactor.Companion.logger!!.info(
+			"Cell at " + this.position!!.toLocation().blockX + ", " + this.position!!.toLocation()
+				.blockY + ", " + this.position!!.toLocation().blockZ + " was ticked"
+		)
+	}
 
-public class QuadUraniumCellEntity extends CellEntity {
+	override val sellAmount: Double
+		get() = 0.0
 
-    public QuadUraniumCellEntity() {
-        super("uranium_quad", Material.EMERALD_BLOCK);
-    }
+	override fun sell() {
+	}
 
-    @Override
-    public void tick(Sellable[] neighbours, MultiTypeMap params) {
-        logger.info("Cell at " + this.getPosition().toLocation().getBlockX() + ", " + this.getPosition().toLocation().getBlockY() + ", " + this.getPosition().toLocation().getBlockZ() + " was ticked");
-    }
-
-    @Override
-    public double getSellAmount() {
-        return 0;
-    }
-
-    @Override
-    public void sell() {
-
-    }
-
-    @Override
-    public Sellable clone() {
-        return new QuadUraniumCellEntity();
-    }
+	override fun clone(): Sellable {
+		return QuadUraniumCellEntity()
+	}
 }

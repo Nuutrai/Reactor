@@ -1,52 +1,48 @@
-package com.nuutrai.reactor.entity;
+package com.nuutrai.reactor.entity
 
-import com.nuutrai.reactor.util.Settable;
-import net.kyori.adventure.util.TriState;
-import org.jetbrains.annotations.ApiStatus.Experimental;
+import com.nuutrai.reactor.util.Settable
+import net.kyori.adventure.util.TriState
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * This is going to be a feature we'll implement after we figure out how to reliably replicate how reactor incremental does theirs
  */
+@ApiStatus.Experimental
+interface Pairable {
+	fun setPair(): Pairable? {
+		return if (!Companion.pair.isNull) Companion.pair.get() else null
+	}
 
-@Experimental
-public interface Pairable {
+	var pair: Pairable?
+		get() = Companion.pair.get()
+		set(pair) {
+			Companion.pair.set(pair)
+		}
 
-    Settable<Pairable> pair = new Settable<>();
+	@ApiStatus.Experimental
+	fun setPair(neighbours: Array<Sellable?>): TriState {
+		for (neighbour in neighbours) {
+			val state = setPair(neighbour)
+			if (state == TriState.TRUE) {
+				return TriState.TRUE
+			} else if (state == TriState.NOT_SET) {
+				return TriState.NOT_SET
+			}
+		}
 
-    default Pairable setPair() {
-        return !pair.isNull() ? pair.get() : null;
-    }
+		return TriState.NOT_SET
+	}
 
-    default Pairable getPair() {
-        return pair.get();
-    }
+	@ApiStatus.Experimental
+	fun setPair(potentialPair: Sellable?): TriState {
+		if (potentialPair !is Pairable) return TriState.FALSE
+		if (potentialPair.pair != null) return TriState.NOT_SET
+		potentialPair.pair = this
+		this.pair = potentialPair
+		return TriState.TRUE
+	}
 
-    default void setPair(Pairable pair) {
-        this.pair.set(pair);
-    }
-
-    @Experimental
-    default TriState setPair(Sellable[] neighbours) {
-        for (Sellable neighbour: neighbours) {
-            TriState state = setPair(neighbour);
-            if (state.equals(TriState.TRUE)) {
-                return TriState.TRUE;
-            } else if (state.equals(TriState.NOT_SET)) {
-                return TriState.NOT_SET;
-            }
-        }
-
-        return TriState.NOT_SET;
-    }
-
-    @Experimental
-    default TriState setPair(Sellable potentialPair) {
-        if (!(potentialPair instanceof Pairable pair))
-            return TriState.FALSE;
-        if (pair.getPair() != null)
-            return TriState.NOT_SET;
-        pair.setPair(this);
-        this.setPair(pair);
-        return TriState.TRUE;
-    }
+	companion object {
+		val pair: Settable<Pairable?> = Settable<Pairable?>()
+	}
 }

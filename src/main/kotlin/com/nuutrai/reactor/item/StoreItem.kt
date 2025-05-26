@@ -1,7 +1,3 @@
-package com.nuutrai.reactor.item;
+package com.nuutrai.reactor.item
 
-public enum StoreItem {
-
-    // Needed?
-
-}
+enum class StoreItem 

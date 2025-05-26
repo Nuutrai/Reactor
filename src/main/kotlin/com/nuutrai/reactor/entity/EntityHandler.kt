@@ -1,58 +1,41 @@
-package com.nuutrai.reactor.entity;
+package com.nuutrai.reactor.entity
 
-import com.google.common.collect.Maps;
-import com.nuutrai.reactor.util.VecLoc;
-import org.bukkit.Material;
+import com.nuutrai.reactor.util.VecLoc
+import java.io.Serializable
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
+class EntityHandler : Serializable {
+	val entityMap: MutableMap<VecLoc?, Sellable?> = mutableMapOf()
+	val locations: ArrayList<VecLoc> = ArrayList()
 
-import static com.nuutrai.reactor.Reactor.logger;
+	fun add(entity: Sellable, location: VecLoc?) {
+		entity.entityHandler = this
+		entityMap.put(location, entity)
+		locations.add(location!!)
+	}
 
-public class EntityHandler implements Serializable {
+	fun remove(location: VecLoc?) {
+		entityMap.remove(location)
+		locations.remove(location)
+	}
 
-    private final HashMap<VecLoc, Sellable> entityMap = Maps.newHashMap();
-    private final ArrayList<VecLoc> locations = new ArrayList<>();
+	fun place() {
+		for (loc in this.locations) {
+			place(loc)
+		}
+	}
 
-    public void add(Sellable entity, VecLoc location) {
-        entity.setEntityHandler(this);
-        entityMap.put(location, entity);
-        locations.add(location);
-    }
+	fun place(loc: VecLoc) {
+		val block = entityMap[loc]!!.block
+		loc.toLocation().block.type = block!!
+	}
 
-    public void remove(VecLoc location) {
-        entityMap.remove(location);
-        locations.remove(location);
-    }
+	fun get(loc: VecLoc?): Sellable? {
+		return entityMap[loc]
+	}
 
-    public void place() {
-        for (VecLoc loc: getLocations()) {
-            place(loc);
-        }
-    }
-
-    public void place(VecLoc loc) {
-        Material block = entityMap.get(loc).getBlock();
-        loc.toLocation().getBlock().setType(block);
-    }
-
-    public Sellable get(VecLoc loc) {
-        return entityMap.get(loc);
-    }
-
-    public HashMap<VecLoc, Sellable> getEntityMap() {
-        return entityMap;
-    }
-
-    public ArrayList<VecLoc> getLocations() {
-        return locations;
-    }
-
-    public void tick() {
-        for (VecLoc location: locations) {
-            entityMap.get(location).tick();
-        }
-    }
-
+	fun tick() {
+		for (location in locations) {
+			entityMap[location]!!.tick()
+		}
+	}
 }

@@ -1,43 +1,37 @@
-package com.nuutrai.reactor.listeners;
+package com.nuutrai.reactor.listeners
 
-import com.nuutrai.reactor.Reactor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
+import com.nuutrai.reactor.Reactor
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.persistence.PersistentDataType
 
-import static com.nuutrai.reactor.Reactor.logger;
+class PlayerInventoryClick : Listener {
 
-public class PlayerInventoryClick implements Listener {
+	@EventHandler
+	fun onJoin(e: InventoryClickEvent){
+		val player = if (e.whoClicked !is Player) return else e.whoClicked as Player
 
-    @EventHandler
-    public void PlayerInventoryClick(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player player))
-            return;
-        if (e.getClickedInventory() != player.getInventory())
-            return;
+		if (e.clickedInventory !== player.inventory) return
 
-        e.setCancelled(true);
+		e.isCancelled = true
 
-        ItemStack item = e.getCurrentItem();
+		val item = e.getCurrentItem()
 
-        if (item == null || item.getType() == Material.AIR)
-            return;
+		if (item == null || item.type == Material.AIR) return
 
-        NamespacedKey key = new NamespacedKey(Reactor.instance, "reactor-id");
-        String id = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+		val key = NamespacedKey(Reactor.instance!!, "reactor-id")
+		val id = item.itemMeta.persistentDataContainer.get<String, String>(key, PersistentDataType.STRING!!)
 
-        if (id == null || id.isEmpty()) {
-            return;
-        }
+		if (id == null || id.isEmpty()) {
+			return
+		}
 
-        player.getInventory().setItem(4, item);
+		player.inventory.setItem(4, item)
 
-        logger.info(id);
-    }
-
+		Reactor.Companion.logger!!.info(id)
+	}
 }

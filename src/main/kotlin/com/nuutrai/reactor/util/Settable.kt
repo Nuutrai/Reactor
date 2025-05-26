@@ -1,18 +1,16 @@
-package com.nuutrai.reactor.util;
+package com.nuutrai.reactor.util
 
-public class Settable<T> {
+class Settable<T> {
+	private var value: T? = null
 
-    private T value;
+	fun set(value: T?) {
+		this.value = value
+	}
 
-    public void set(T value) {
-        this.value = value;
-    }
+	fun get(): T? {
+		return value
+	}
 
-    public T get() {
-        return value;
-    }
-
-    public boolean isNull() {
-        return value == null;
-    }
+	val isNull: Boolean
+		get() = value == null
 }

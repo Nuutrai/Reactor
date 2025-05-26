@@ -1,125 +1,90 @@
-package com.nuutrai.reactor.util;
+package com.nuutrai.reactor.util
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
+import com.nuutrai.reactor.Reactor
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.World
+import java.io.Serializable
+import java.util.*
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.zip.ZipEntry;
+class VecLoc : Serializable {
+	//    public String getId() {
+	//        return String.valueOf(hashCode());
+	//    }
+    @JvmField
+    var x: Int
+	@JvmField
+    var y: Int
+	@JvmField
+    var z: Int
+	var uUID: UUID
+		private set
 
-import static com.nuutrai.reactor.Reactor.logger;
+	constructor(x: Int, y: Int, z: Int, world: UUID) {
+		this.uUID = world
+		this.z = z
+		this.y = y
+		this.x = x
+	}
 
-public class VecLoc implements Serializable {
+	constructor(location: Location, world: UUID) {
+		this.x = location.getBlockX()
+		this.y = location.getBlockY()
+		this.z = location.getBlockZ()
+		this.uUID = world
+	}
 
-    private int x;
-    private int y;
-    private int z;
-    private UUID world;
+	fun toLocation(): Location {
+		try {
+			return Location(getWorld(), x.toDouble(), y.toDouble(), z.toDouble())
+		} catch (e: NullPointerException) {
+			Reactor.Companion.logger!!.severe("BUILD FALLBACK DUMB DUMB")
+		}
+		return Location(Bukkit.getWorlds().getFirst(), x.toDouble(), y.toDouble(), z.toDouble())
+	}
 
-    public VecLoc(int x, int y, int z, UUID world) {
-        this.world = world;
-        this.z = z;
-        this.y = y;
-        this.x = x;
-    }
+	fun toLocation(world: UUID): Location {
+		return Location(getWorld(world), x.toDouble(), y.toDouble(), z.toDouble())
+	}
 
-    public VecLoc(Location location, UUID world) {
-        this.x = location.getBlockX();
-        this.y = location.getBlockY();
-        this.z = location.getBlockZ();
-        this.world = world;
-    }
+	fun setWorld(world: UUID) {
+		this.uUID = world
+	}
 
-    public Location toLocation() {
-        try {
-            return new Location(getWorld(), x, y, z);
-        } catch (NullPointerException e) {
-            logger.severe("BUILD FALLBACK DUMB DUMB");
-        }
-        return new Location(Bukkit.getWorlds().getFirst(), x, y, z);
-    }
+	fun getWorld(): World? {
+		return getWorld(this.uUID)
+	}
 
-    public Location toLocation(UUID world) {
-        return new Location(getWorld(world), x, y, z);
-    }
+	val neighbours: MutableList<VecLoc?>
+		get() {
+			val locs = ArrayList<VecLoc?>()
 
-    public void setX(int x) {
-        this.x = x;
-    }
+			locs.add(VecLoc(x + 1, y, z, this.uUID))
+			locs.add(VecLoc(x - 1, y, z, this.uUID))
+			locs.add(VecLoc(x, y, z + 1, this.uUID))
+			locs.add(VecLoc(x, y, z - 1, this.uUID))
 
-    public void setY(int y) {
-        this.y = y;
-    }
+			return locs
+		}
 
-    public void setZ(int z) {
-        this.z = z;
-    }
+	override fun equals(`object`: Any?): Boolean {
+		if (this === `object`) return true
+		if (`object` == null || javaClass != `object`.javaClass) return false
+		val vecLoc = `object` as VecLoc
+		return x == vecLoc.x && y == vecLoc.y && z == vecLoc.z && this.uUID == vecLoc.uUID
+	}
 
-    public void setWorld(UUID world) {
-        this.world = world;
-    }
+	override fun hashCode(): Int {
+		return Objects.hash(x, y, z, this.uUID)
+	}
 
-    public World getWorld() {
-        return getWorld(world);
-    }
+	override fun toString(): String {
+		return String.format("VecLoc@%s,%s,%s", this.x, this.y, this.z)
+	}
 
-    public UUID getUUID() {
-        return world;
-    }
-
-    public List<VecLoc> getNeighbours() {
-        ArrayList<VecLoc> locs = new ArrayList<>();
-
-        locs.add(new VecLoc(x+1, y, z, world));
-        locs.add(new VecLoc(x-1, y, z, world));
-        locs.add(new VecLoc(x, y, z+1, world));
-        locs.add(new VecLoc(x, y, z-1, world));
-
-        return locs;
-
-    }
-
-    public static World getWorld(UUID world) {
-        return Bukkit.getWorld(world.toString());
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        VecLoc vecLoc = (VecLoc) object;
-        return x == vecLoc.x && y == vecLoc.y && z == vecLoc.z && Objects.equals(world, vecLoc.world);
-    }
-
-//    public String getId() {
-//        return String.valueOf(hashCode());
-//    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getZ() {
-        return z;
-    }
-
-    public int hashCode() {
-        return Objects.hash(x, y, z, world);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("VecLoc@%s,%s,%s", getX(), getY(), getZ());
-    }
-
+	companion object {
+		fun getWorld(world: UUID): World? {
+			return Bukkit.getWorld(world.toString())
+		}
+	}
 }

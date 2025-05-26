@@ -1,58 +1,42 @@
-package com.nuutrai.reactor.player;
+package com.nuutrai.reactor.player
 
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.util.VecLoc;
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.util.VecLoc
+import java.io.Serializable
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
+class PlayerDataWrapper : Serializable {
+	var balance: Int = 0
+		private set
+    val entities: HashMap<VecLoc?, Sellable?>?
+    val locations: ArrayList<VecLoc?>?
+	var heat: Double = 0.0
+		private set
+	var power: Int = 0
+		private set
 
-public class PlayerDataWrapper implements Serializable {
+	constructor(pd: PlayerData) {
+		this.balance = pd.balance
+		this.heat = pd.heat
+		this.power = pd.power
+		this.entities = pd.entities.entityMap
+		this.locations = pd.entities.locations
+	}
 
-    private int balance = 0;
-    private HashMap<VecLoc, Sellable> entities;
-    private ArrayList<VecLoc> locations;
-    private double heat = 0;
-    private int power = 0;
+	constructor(
+		balance: Int,
+		entities: HashMap<VecLoc?, Sellable?>?,
+		locations: ArrayList<VecLoc?>?,
+		heat: Int,
+		power: Int
+	) {
+		this.balance = balance
+		this.entities = entities
+		this.locations = locations
+		this.heat = heat.toDouble()
+		this.power = power
+	}
 
-    public PlayerDataWrapper(PlayerData pd) {
-        this.balance = pd.getBalance();
-        this.heat = pd.getHeat();
-        this.power = pd.getPower();
-        this.entities = pd.getEntities().getEntityMap();
-        this.locations = pd.getEntities().getLocations();
-    }
-
-    public PlayerDataWrapper(int balance, HashMap<VecLoc, Sellable> entities, ArrayList<VecLoc> locations, int heat, int power) {
-        this.balance = balance;
-        this.entities = entities;
-        this.locations = locations;
-        this.heat = heat;
-        this.power = power;
-    }
-
-    public int getBalance() {
-        return balance;
-    }
-
-    public double getHeat() {
-        return heat;
-    }
-
-    public HashMap<VecLoc, Sellable> getEntities() {
-        return entities;
-    }
-
-    public ArrayList<VecLoc> getLocations() {
-        return locations;
-    }
-
-    public int getPower() {
-        return power;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
+	override fun toString(): String {
+		return super.toString()
+	}
 }

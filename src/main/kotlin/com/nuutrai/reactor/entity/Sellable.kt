@@ -1,17 +1,13 @@
-package com.nuutrai.reactor.entity;
+package com.nuutrai.reactor.entity
 
-import com.google.common.collect.Maps;
-import com.nuutrai.reactor.item.Buyable;
-import com.nuutrai.reactor.util.ChangeMode;
-import com.nuutrai.reactor.util.MultiTypeMap;
-import com.nuutrai.reactor.util.VecLoc;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-
-import java.util.Map;
-
-import static com.nuutrai.reactor.util.ChangeMode.*;
+import com.google.common.collect.Maps
+import com.nuutrai.reactor.item.Buyable
+import com.nuutrai.reactor.util.ChangeMode
+import com.nuutrai.reactor.util.MultiTypeMap
+import com.nuutrai.reactor.util.VecLoc
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.entity.Player
 
 /**
  *
@@ -21,145 +17,104 @@ import static com.nuutrai.reactor.util.ChangeMode.*;
  * @player The associated player
  * @position The position (VecLoc) of the sellable
  * @currentHealth The current health of the sellable (To be determined at the end of the tick)
- *
  */
+abstract class Sellable(val id: String, val block: Material?) {
+	val maxHealth: Double
+	var player: Player? = null
+		private set
+	var position: VecLoc? = null
+		private set
+    var currentHealth: Double = 0.0
+    var entityHandler: EntityHandler? = null
 
-public abstract class Sellable {
+	/*
+	public Sellable(String id, Material block, Player player, Location position) {
+		this.id = id;
+		this.player = player.getUniqueId();
+		this.position = new VecLoc(position, player.getUniqueId());
+		this.block = block;
+		this.maxHealth = getType().getHealth();
+	}
+	*/
+	init {
+		this.maxHealth = this.type!!.health
+	}
 
-    private final String id;
-    private final Material block;
-    private final double maxHealth;
-    private Player player = null;
-    private VecLoc position = null;
-    private double currentHealth;
-    private EntityHandler entityHandler;
-    private static final Map<String, Sellable> SELLABLES = Maps.newHashMap();
+	val type: Buyable?
+		get() = Buyable.get(id)
 
-    /*
-    public Sellable(String id, Material block, Player player, Location position) {
-        this.id = id;
-        this.player = player.getUniqueId();
-        this.position = new VecLoc(position, player.getUniqueId());
-        this.block = block;
-        this.maxHealth = getType().getHealth();
-    }
-    */
+	val power: Int
+		get() = this.type!!.power
 
-    public Sellable(String id, Material block) {
-        this.id = id;
-        this.block = block;
-        this.maxHealth = getType().getHealth();
-    }
+	val heat: Double
+		get() = this.type!!.heat
 
-    public static Sellable create(Sellable sellable, Player player, Location position) {
-        return create(sellable, player, new VecLoc(position, player.getUniqueId()));
-    }
+	val health: Double
+		get() = this.type!!.health
 
-    public static Sellable create(Sellable sellable, Player player, VecLoc position) {
-        Sellable s = sellable.clone();
+	protected val heatToCostRatio: Float
+		get() = (this.heat / this.type!!.cost).toFloat()
 
-        s.player = player;
-        s.position = position;
+	fun health(by: Double, changeMode: ChangeMode) {
+		when (changeMode) {
+			ChangeMode.SET -> {
+				currentHealth = by
+			}
+			ChangeMode.DECREASE -> {
+				currentHealth -= by
+			}
+			ChangeMode.ADD -> {
+				currentHealth += by
+			}
+		}
+	}
 
-        return s;
-    }
+	abstract fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?)
 
-    public static Sellable get(String id) {
-        return SELLABLES.get(id);
-    }
+	abstract fun tick()
 
-    public static void add(Sellable s) {
-        SELLABLES.put(s.getType().getId(), s);
-    }
+	abstract val sellAmount: Double
 
-    public String getId() {
-        return id;
-    }
+	abstract fun sell()
 
-    public Buyable getType() {
-        return Buyable.get(id);
-    }
+	fun explode() {
+		delete(false)
+	}
 
-    public int getPower() {
-        return getType().getPower();
-    }
+	fun delete(isDepleted: Boolean) {
+		if (isDepleted) {
+			// Do stuff for turning into *nothing*
+		}
+	}
 
-    public Material getBlock() {
-        return block;
-    }
+	abstract fun clone(): Sellable
 
-    public VecLoc getPosition() {
-        return this.position;
-    }
+	fun equals(s: Sellable): Boolean {
+		return id == s.id
+	}
 
-    public void setCurrentHealth(double currentHealth) {
-        this.currentHealth = currentHealth;
-    }
+	companion object {
+		private val SELLABLES: MutableMap<String?, Sellable?> = Maps.newHashMap<String?, Sellable?>()
 
-    public double getHeat() {
-        return getType().getHeat();
-    }
+		fun create(sellable: Sellable, player: Player, position: Location): Sellable {
+			return create(sellable, player, VecLoc(position, player.uniqueId))
+		}
 
-    public double getHealth() {
-        return getType().getHealth();
-    }
+        fun create(sellable: Sellable, player: Player?, position: VecLoc?): Sellable {
+			val s = sellable.clone()
 
-    protected float getHeatToCostRatio() {
-        return (float) (getHeat() / getType().getCost());
-    }
+			s.player = player
+			s.position = position
 
-    public void health(double by, ChangeMode changeMode) {
-        if (changeMode == SET) {
-            currentHealth = by;
-        } else if (changeMode == DECREASE) {
-            currentHealth -= by;
-        } else if (changeMode == ADD) {
-            currentHealth += by;
-        }
-    }
+			return s
+		}
 
-    public EntityHandler getEntityHandler() {
-        return entityHandler;
-    }
+        fun get(id: String?): Sellable? {
+			return SELLABLES[id]
+		}
 
-    public void setEntityHandler(EntityHandler entityHandler) {
-        this.entityHandler = entityHandler;
-    }
-
-    public abstract void tick(Sellable[] neighbours, MultiTypeMap params);
-
-    public abstract void tick();
-
-    public abstract double getSellAmount();
-
-    public abstract void sell();
-
-    public void explode() {
-        delete(false);
-    }
-
-    public void delete(boolean isDepleted) {
-        if (isDepleted) {
-            // Do stuff for turning into *nothing*
-        }
-    }
-
-    public abstract Sellable clone();
-
-    public boolean equals(Sellable s) {
-        return id.equals(s.getId());
-    }
-
-    public double getMaxHealth() {
-        return maxHealth;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public double getCurrentHealth() {
-        return currentHealth;
-    }
-
+		fun add(s: Sellable) {
+			SELLABLES.put(s.type!!.id, s)
+		}
+	}
 }

@@ -1,101 +1,105 @@
-package com.nuutrai.reactor.store;
+package com.nuutrai.reactor.store
 
-import com.google.common.collect.MultimapBuilder;
-import com.nuutrai.reactor.data.DataManager;
-import com.nuutrai.reactor.item.Buyable;
-import com.nuutrai.reactor.player.PlayerData;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import com.google.common.collect.MultimapBuilder
+import com.nuutrai.reactor.data.DataManager
+import com.nuutrai.reactor.item.Buyable
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Material
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 
-import java.util.ArrayList;
+object Store {
+	@JvmStatic
+    fun setup(player: Player) {
+		val inventory: Inventory = player.getInventory()
 
-public class Store {
+		val items = getItems(player)
 
-   public static void setup(Player player) {
+		for (i in items.indices) {
+			inventory.setItem(i, items.get(i))
+		}
+	}
 
-       Inventory inventory = player.getInventory();
+	fun getItems(player: Player?): ArrayList<ItemStack?> {
+		val items = ArrayList<ItemStack?>()
 
-       ArrayList<ItemStack> items = getItems(player);
+		for (i in 0..2) {
+			items.add(background)
+		}
 
-       for (int i = 0; i < items.size(); i++) {
-           inventory.setItem(i, items.get(i));
-       }
-   }
+		val playerData = DataManager.get(player)
 
-   public static ArrayList<ItemStack> getItems(Player player) {
-       ArrayList<ItemStack> items = new ArrayList<>();
+		val power = ItemStack(Material.WIND_CHARGE)
+		val powerMeta = power.getItemMeta()
+		powerMeta.displayName(
+			Component.text(playerData.power.toString() + " Power", NamedTextColor.AQUA)
+				.decoration(TextDecoration.ITALIC, false)
+		)
+		power.setItemMeta(powerMeta)
+		items.add(power)
 
-       for (int i = 0; i < 3; i++) {
-           items.add(getBackground());
-       }
+		items.add(ItemStack.of(Material.AIR))
+		val heat = ItemStack(Material.BLAZE_POWDER)
+		val heatMeta = heat.getItemMeta()
+		heatMeta.displayName(
+			Component.text(playerData.heat.toString() + " Heat", NamedTextColor.RED)
+				.decoration(TextDecoration.ITALIC, false)
+		)
+		heat.setItemMeta(heatMeta)
+		items.add(heat)
 
-       PlayerData playerData = DataManager.get(player);
+		for (i in 0..2) {
+			items.add(background)
+		}
 
-       ItemStack power = new ItemStack(Material.WIND_CHARGE);
-       ItemMeta powerMeta = power.getItemMeta();
-       powerMeta.displayName(Component.text(playerData.getPower() + " Power", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
-       power.setItemMeta(powerMeta);
-       items.add(power);
-
-       items.add(ItemStack.of(Material.AIR));
-       ItemStack heat = new ItemStack(Material.BLAZE_POWDER);
-       ItemMeta heatMeta = heat.getItemMeta();
-       heatMeta.displayName(Component.text(playerData.getHeat() + " Heat", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
-       heat.setItemMeta(heatMeta);
-       items.add(heat);
-
-       for (int i = 0; i < 3; i++) {
-           items.add(getBackground());
-       }
-
-       /*
+		/*
          Type-s-Stage
         */
+		val cs1 = ItemStack(Buyable.get("uranium_single").item)
+		val cs2 = ItemStack(Buyable.get("uranium_double").item)
+		val cs3 = ItemStack(Buyable.get("uranium_quad").item)
 
-       ItemStack cs1 = new ItemStack(Buyable.get("uranium_single").getItem());
-       ItemStack cs2 = new ItemStack(Buyable.get("uranium_double").getItem());
-       ItemStack cs3 = new ItemStack(Buyable.get("uranium_quad").getItem());
+		items.add(cs1)
+		items.add(cs2)
+		items.add(cs3)
 
-       items.add(cs1);
-       items.add(cs2);
-       items.add(cs3);
+		for (i in 0..3) {
+			items.add(background)
+		}
 
-       for (int i = 0; i < 4; i++) {
-           items.add(getBackground());
-       }
+		val vs1 = ItemStack(Buyable.get("basic_vent").item)
+		val vs2 = ItemStack(Buyable.get("advanced_vent").item)
 
-       ItemStack vs1 = new ItemStack(Buyable.get("basic_vent").getItem());
-       ItemStack vs2 = new ItemStack(Buyable.get("advanced_vent").getItem());
+		items.add(vs1)
+		items.add(vs2)
 
-       items.add(vs1);
-       items.add(vs2);
+		for (i in 0..17) {
+			items.add(background)
+		}
 
-       for (int i = 0; i < 18; i++) {
-           items.add(getBackground());
-       }
+		for (i in 0..3) {
+			items.add(ItemStack.of(Material.AIR))
+		}
 
-       for (int i = 0; i < 4; i++) {
-           items.add(ItemStack.of(Material.AIR));
-       }
+		items.add(playerData.determinePauseItem())
 
-       items.add(playerData.determinePauseItem());
+		return items
+	}
 
-       return items;
-   }
-
-   private static ItemStack getBackground() {
-       ItemStack item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-       ItemMeta itemMeta = item.getItemMeta();
-       itemMeta.setHideTooltip(true);
-       itemMeta.setAttributeModifiers(MultimapBuilder.hashKeys().hashSetValues().build());
-       item.setItemMeta(itemMeta);
-       return item;
-   }
-
+	private val background: ItemStack
+		get() {
+			val item = ItemStack(Material.GRAY_STAINED_GLASS_PANE)
+			val itemMeta = item.getItemMeta()
+			itemMeta.setHideTooltip(true)
+			itemMeta.setAttributeModifiers(
+				MultimapBuilder.hashKeys().hashSetValues().build<Attribute?, AttributeModifier?>()
+			)
+			item.setItemMeta(itemMeta)
+			return item
+		}
 }

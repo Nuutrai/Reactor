@@ -1,13 +1,12 @@
-package com.nuutrai.reactor.tick;
+package com.nuutrai.reactor.tick
 
-import com.nuutrai.reactor.data.DataManager;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import com.nuutrai.reactor.data.DataManager
+import org.bukkit.Bukkit
 
-public class Ticker {
-    public void tick() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            DataManager.get(player).tick();
-        }
-    }
+class Ticker {
+	fun tick() {
+		for (player in Bukkit.getOnlinePlayers()) {
+			DataManager.get(player).tick()
+		}
+	}
 }

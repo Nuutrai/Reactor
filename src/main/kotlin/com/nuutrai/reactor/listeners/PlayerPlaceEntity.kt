@@ -1,125 +1,105 @@
-package com.nuutrai.reactor.listeners;
+package com.nuutrai.reactor.listeners
 
-import com.google.common.collect.Maps;
-import com.nuutrai.reactor.Reactor;
-import com.nuutrai.reactor.data.DataManager;
-import com.nuutrai.reactor.entity.Sellable;
-import com.nuutrai.reactor.player.PlayerData;
-import com.nuutrai.reactor.util.FaceToDirection;
-import com.nuutrai.reactor.util.VecLoc;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
+import com.google.common.collect.Maps
+import com.nuutrai.reactor.Reactor
+import com.nuutrai.reactor.data.DataManager
+import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.util.FaceToDirection.get
+import com.nuutrai.reactor.util.VecLoc
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
+import java.time.Instant
 
-import java.time.Instant;
-import java.util.HashMap;
+class PlayerPlaceEntity : Listener {
+	@EventHandler
+	fun PlaceInteractEvent(e: PlayerInteractEvent) {
+		val p = e.getPlayer()
+		if (p.world != Bukkit.getWorld(p.uniqueId.toString())) return
 
-import static com.nuutrai.reactor.Reactor.logger;
+		e.setCancelled(true)
 
-public class PlayerPlaceEntity implements Listener {
+		// Add raytrace at some point
+		val block = e.clickedBlock
+		if (block == null) return
 
-    private static HashMap<Player, Instant> cooldowns = Maps.newHashMap();
-    private static final int timeToWait = 100;
-    private static final int timeToPurge = 1000;
+		// Add cooldown
+		if (!cooldowns.containsKey(p)) cooldowns.put(p, Instant.now().minusMillis(timeToWait.toLong()))
+		if (cooldowns.get(p)!!.isAfter(Instant.now())) return
+		cooldowns.put(p, Instant.now().plusMillis(timeToWait.toLong()))
+		Bukkit.getScheduler().runTaskLater(Reactor.instance!!, Runnable {
+			if (!cooldowns.containsKey(p)) return@Runnable
+			if (cooldowns.get(p)!!.isAfter(Instant.now().minusMillis(timeToPurge.toLong()))) return@Runnable
+			cooldowns.remove(p)
+		}, timeToPurge.toLong())
 
-    @EventHandler
-    public void PlaceInteractEvent(PlayerInteractEvent e) {
+		// End
+		if (e.getAction().isRightClick) {
+			val newLoc = VecLoc(block.location.add(get(e.getBlockFace())), p.uniqueId)
 
-        Player p = e.getPlayer();
-        if (!p.getWorld().equals(Bukkit.getWorld(p.getUniqueId().toString())))
-            return;
+			if (newLoc.y != 121) return
 
-        e.setCancelled(true);
+			for (player in p.world.players) {
+				val pLoc = VecLoc(player.location, p.uniqueId)
+				if (pLoc.x == newLoc.x && pLoc.y == newLoc.y && pLoc.z == newLoc.z) return
+			}
 
-        // Add raytrace at some point
-        Block block = e.getClickedBlock();
-        if (block == null)
-            return;
+			// Checks
+			val item = e.getItem()
+			if (item == null || item.type == Material.AIR) return
 
-        // Add cooldown
-        if (!cooldowns.containsKey(p))
-            cooldowns.put(p, Instant.now().minusMillis(timeToWait));
-        if (cooldowns.get(p).isAfter(Instant.now()))
-            return;
-        cooldowns.put(p, Instant.now().plusMillis(timeToWait));
-        Bukkit.getScheduler().runTaskLater(Reactor.instance, () -> {
-            if (!cooldowns.containsKey(p))
-                return;
-            if (cooldowns.get(p).isAfter(Instant.now().minusMillis(timeToPurge)))
-                return;
-            cooldowns.remove(p);
-        }, timeToPurge);
-        // End
+			val key = NamespacedKey(Reactor.instance!!, "reactor-id")
+			val id =
+				item.itemMeta.persistentDataContainer.get<String?, String?>(key, PersistentDataType.STRING!!)
+			if (id == null || id.isEmpty()) return
 
-        if (e.getAction().isRightClick()) {
+			// End
+			place(id, p, newLoc)
+		} else if (e.getAction().isLeftClick) {
+			val newLoc = VecLoc(block.location, p.uniqueId)
+			breakEntity(p, newLoc)
+		}
+	}
 
-            VecLoc newLoc = new VecLoc(block.getLocation().add(FaceToDirection.get(e.getBlockFace())), p.getUniqueId());
+	companion object {
+		private val cooldowns: HashMap<Player?, Instant?> = Maps.newHashMap<Player?, Instant?>()
+		private const val timeToWait = 100
+		private const val timeToPurge = 1000
 
-            if (newLoc.getY() != 121)
-                return;
+		fun breakEntity(p: Player, vecloc: VecLoc) {
+			val pd = DataManager.get(p)
 
-            for (Player player: p.getWorld().getPlayers()) {
-                VecLoc pLoc = new VecLoc(player.getLocation(), p.getUniqueId());
-                if (pLoc.getX() == newLoc.getX() && pLoc.getY() == newLoc.getY() && pLoc.getZ() == newLoc.getZ())
-                    return;
-            }
+			if (pd.entities.get(vecloc) == null) {
+				p.inventory.setItem(4, ItemStack.of(Material.AIR))
+				return
+			}
 
-            // Checks
-            ItemStack item = e.getItem();
-            if (item == null || item.getType() == Material.AIR)
-                return;
+			pd.entities.remove(vecloc)
+			vecloc.toLocation().block.type = Material.AIR
+		}
 
-            NamespacedKey key = new NamespacedKey(Reactor.instance, "reactor-id");
-            String id = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
-            if (id == null || id.isEmpty())
-                return;
-            // End
-
-            place(id, p, newLoc);
-
-        } else if (e.getAction().isLeftClick()) {
-            VecLoc newLoc = new VecLoc(block.getLocation(), p.getUniqueId());
-            breakEntity(p, newLoc);
-        }
-    }
-
-    public static void breakEntity(Player p, VecLoc vecloc) {
-        PlayerData pd = DataManager.get(p);
-
-        if (pd.getEntities().get(vecloc) == null) {
-            p.getInventory().setItem(4, ItemStack.of(Material.AIR));
-            return;
-        }
-
-        pd.getEntities().remove(vecloc);
-        vecloc.toLocation().getBlock().setType(Material.AIR);
-
-    }
-
-    public static void place(String id, Player p, VecLoc vecLoc) {
+		fun place(id: String?, p: Player?, vecLoc: VecLoc) {
 //        Cell cell = Cell.getCell(id).clone();
 
-        PlayerData pd = DataManager.get(p);
+			val pd = DataManager.get(p)
 
-        Sellable copy = Sellable.get(id);
-        Sellable entity = Sellable.create(copy, p, vecLoc);
+			val copy = Sellable.get(id)
+			val entity = Sellable.create(copy, p, vecLoc)
 
-        logger.info("" + pd.getBalance());
-        logger.info("" + entity.getType().getCost());
+			Reactor.Companion.logger!!.info("" + pd.balance)
+			Reactor.Companion.logger!!.info("" + entity.getType().cost)
 
-        Material block = entity.getBlock();
-        Location location = vecLoc.toLocation();
-        location.getBlock().setType(block);
+			val block = entity.block
+			val location = vecLoc.toLocation()
+			location.block.setType(block)
 
-        DataManager.get(p).addEntity(entity, vecLoc);
-    }
-
+			DataManager.get(p).addEntity(entity, vecLoc)
+		}
+	}
 }
