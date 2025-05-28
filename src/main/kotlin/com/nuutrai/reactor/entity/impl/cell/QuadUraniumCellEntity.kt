@@ -7,8 +7,8 @@ import com.nuutrai.reactor.util.MultiTypeMap
 import org.bukkit.Material
 
 class QuadUraniumCellEntity : CellEntity("uranium_quad", Material.EMERALD_BLOCK) {
-	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?) {
-		Reactor.Companion.logger!!.info(
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap) {
+		Reactor.Companion.logger.info(
 			"Cell at " + this.position!!.toLocation().blockX + ", " + this.position!!.toLocation()
 				.blockY + ", " + this.position!!.toLocation().blockZ + " was ticked"
 		)

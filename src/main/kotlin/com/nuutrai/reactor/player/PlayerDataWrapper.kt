@@ -7,8 +7,8 @@ import java.io.Serializable
 class PlayerDataWrapper : Serializable {
 	var balance: Int = 0
 		private set
-    val entities: HashMap<VecLoc?, Sellable?>?
-    val locations: ArrayList<VecLoc?>?
+    val entities: MutableMap<VecLoc, Sellable>
+    val locations: ArrayList<VecLoc>
 	var heat: Double = 0.0
 		private set
 	var power: Int = 0
@@ -24,8 +24,8 @@ class PlayerDataWrapper : Serializable {
 
 	constructor(
 		balance: Int,
-		entities: HashMap<VecLoc?, Sellable?>?,
-		locations: ArrayList<VecLoc?>?,
+		entities: MutableMap<VecLoc, Sellable>,
+		locations: ArrayList<VecLoc>,
 		heat: Int,
 		power: Int
 	) {
@@ -36,7 +36,4 @@ class PlayerDataWrapper : Serializable {
 		this.power = power
 	}
 
-	override fun toString(): String {
-		return super.toString()
-	}
 }

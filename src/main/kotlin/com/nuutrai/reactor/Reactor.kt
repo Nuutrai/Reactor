@@ -1,3 +1,5 @@
+@file:Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "UnstableApiUsage")
+
 package com.nuutrai.reactor
 
 import com.google.common.reflect.ClassPath
@@ -57,43 +59,43 @@ class Reactor : JavaPlugin() {
 		// Plugin startup logic
 
 		instance = this
-		Companion.logger = this.getLogger()
-		Companion.dataFolder = this.getDataFolder()
-		manager = instance!!.getLifecycleManager()
+		Companion.logger = this.logger
+		Companion.dataFolder = this.dataFolder
+		manager = instance.lifecycleManager
 		ticker = Ticker()
 
-		Companion.logger!!.info("Reactor startup initiated")
+		Companion.logger.info("Reactor startup initiated")
 
 		ensureDataFolder()
 
-		Companion.logger!!.info("Data folder: " + Companion.dataFolder)
+		Companion.logger.info("Data folder: " + Companion.dataFolder)
 
 		WorldManager.init()
 
 		try {
 			registerListeners("com.nuutrai.reactor.listeners")
-		} catch (e: IOException) {
-			Companion.logger!!.severe("Something went horribly wrong whilst loading events!")
+		} catch (_: IOException) {
+			Companion.logger.severe("Something went horribly wrong whilst loading events!")
 		}
 
 		try {
-			registerReactorElements<Buyable?>("item", Buyable::class.java)
-		} catch (e: IOException) {
-			Companion.logger!!.severe("Something went horribly wrong whilst loading buyables!")
+			registerReactorElements("item", Buyable::class.java)
+		} catch (_: IOException) {
+			Companion.logger.severe("Something went horribly wrong whilst loading buyables!")
 		}
 
 		try {
-			registerReactorElements<Sellable?>("entity", Sellable::class.java)
-		} catch (e: IOException) {
-			Companion.logger!!.severe("Something went horribly wrong whilst loading sellables!")
+			registerReactorElements("entity", Sellable::class.java)
+		} catch (_: IOException) {
+			Companion.logger.severe("Something went horribly wrong whilst loading sellables!")
 		}
 
 		try {
 			RegisterCommands.load()
-		} catch (e: InvocationTargetException) {
-			Companion.logger!!.severe("Something went incredibly wrong whist loading commands!")
-		} catch (e: IllegalAccessException) {
-			Companion.logger!!.severe("Something went incredibly wrong whist loading commands!")
+		} catch (_: InvocationTargetException) {
+			Companion.logger.severe("Something went incredibly wrong whist loading commands!")
+		} catch (_: IllegalAccessException) {
+			Companion.logger.severe("Something went incredibly wrong whist loading commands!")
 		}
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(instance!!, Runnable {
@@ -102,7 +104,7 @@ class Reactor : JavaPlugin() {
 
 		WorldManager.purge()
 
-		Companion.logger!!.info("Reactor startup complete")
+		Companion.logger.info("Reactor startup complete")
 	}
 
 	override fun onDisable() {
@@ -110,15 +112,15 @@ class Reactor : JavaPlugin() {
 	}
 
 	private fun ensureDataFolder() {
-		if (getDataFolder().exists()) return
-		getDataFolder().mkdir()
+		if (dataFolder.exists()) return
+		dataFolder.mkdir()
 	}
 
-	@kotlin.Throws(IOException::class)
-	private fun <T> registerReactorElements(subpackageName: String, parentClass: Class<T?>) {
-		val classPath = ClassPath.from(this.getClassLoader())
+	@Throws(IOException::class)
+	private fun <T> registerReactorElements(subpackageName: String, parentClass: Class<T>) {
+		val classPath = ClassPath.from(this.classLoader)
 
-		val packageName = "com.nuutrai.reactor." + subpackageName + ".impl"
+		val packageName = "com.nuutrai.reactor.$subpackageName.impl"
 
 		for (classInfo in classPath.getTopLevelClassesRecursive(packageName)) {
 			val clazz = classInfo.load()
@@ -127,35 +129,34 @@ class Reactor : JavaPlugin() {
 				try {
 					val constructor: Constructor<*> = clazz.getDeclaredConstructor()
 					constructor.setAccessible(true)
-					val instance = constructor.newInstance() as T?
+					val instance = constructor.newInstance()
 
-					// Call the static add() method on the parent class
 					parentClass.getMethod("add", parentClass).invoke(null, instance)
 
-					Companion.logger!!.info("Registered " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
+					Companion.logger.info("Registered " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
 				} catch (e: NoSuchMethodException) {
-					Companion.logger!!.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
 					e.printStackTrace()
 				} catch (e: InstantiationException) {
-					Companion.logger!!.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
 					e.printStackTrace()
 				} catch (e: IllegalAccessException) {
-					Companion.logger!!.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
 					e.printStackTrace()
 				} catch (e: InvocationTargetException) {
-					Companion.logger!!.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register " + parentClass.getSimpleName() + ": " + clazz.getSimpleName())
 					e.printStackTrace()
 				}
 			}
 		}
 	}
 
-	@kotlin.Throws(IOException::class)
+	@Throws(IOException::class)
 	private fun registerListeners(packageName: String) {
 		// Get all classes in the specified package using Guava's ClassPath
-		val classPath = ClassPath.from(this.getClassLoader())
-		Companion.logger!!.info(classPath.getTopLevelClassesRecursive(packageName).toString())
-		Companion.logger!!.info("" + classPath.getTopLevelClassesRecursive(packageName).size)
+		val classPath = ClassPath.from(this.classLoader)
+		Companion.logger.info(classPath.getTopLevelClassesRecursive(packageName).toString())
+		Companion.logger.info("" + classPath.getTopLevelClassesRecursive(packageName).size)
 		for (classInfo in classPath.getTopLevelClassesRecursive(packageName)) {
 			val clazz = classInfo.load()
 
@@ -168,19 +169,19 @@ class Reactor : JavaPlugin() {
 					val listener = constructor.newInstance() as Listener
 
 					// Register the listener with Bukkit
-					getServer().getPluginManager().registerEvents(listener, this)
-					Companion.logger!!.info("Registered listener: " + clazz.getSimpleName())
+					server.pluginManager.registerEvents(listener, this)
+					Companion.logger.info("Registered listener: " + clazz.getSimpleName())
 				} catch (e: NoSuchMethodException) {
-					Companion.logger!!.severe("Failed to register listener: " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register listener: " + clazz.getSimpleName())
 					e.printStackTrace()
 				} catch (e: InstantiationException) {
-					Companion.logger!!.severe("Failed to register listener: " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register listener: " + clazz.getSimpleName())
 					e.printStackTrace()
 				} catch (e: IllegalAccessException) {
-					Companion.logger!!.severe("Failed to register listener: " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register listener: " + clazz.getSimpleName())
 					e.printStackTrace()
 				} catch (e: InvocationTargetException) {
-					Companion.logger!!.severe("Failed to register listener: " + clazz.getSimpleName())
+					Companion.logger.severe("Failed to register listener: " + clazz.getSimpleName())
 					e.printStackTrace()
 				}
 			}
@@ -188,14 +189,10 @@ class Reactor : JavaPlugin() {
 	}
 
 	companion object {
-		@kotlin.jvm.JvmField
-        var instance: Reactor? = null
+        lateinit var instance: Reactor
 		var HALTTICK: Boolean = false
-		@kotlin.jvm.JvmField
-        var logger: Logger? = null
-		@kotlin.jvm.JvmField
-        var dataFolder: File? = null
-		@kotlin.jvm.JvmField
-        var manager: LifecycleEventManager<Plugin?>? = null
+        lateinit var logger: Logger
+        lateinit var dataFolder: File
+		lateinit var manager: LifecycleEventManager<Plugin>
 	}
 }

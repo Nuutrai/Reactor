@@ -29,8 +29,8 @@ class PlayerData : Serializable {
 		this.balance = playerDataWrapper.balance
 		this.heat = playerDataWrapper.heat
 		this.power = playerDataWrapper.power
-		for (loc in playerDataWrapper.locations!!) {
-			val s = playerDataWrapper.entities!!.get(loc)
+		for (loc in playerDataWrapper.locations) {
+			val s = playerDataWrapper.entities[loc] ?: continue
 			this.entities.add(s, loc)
 		}
 	}
@@ -43,11 +43,11 @@ class PlayerData : Serializable {
 		this.balance += by
 	}
 
-	fun addEntity(s: Sellable, location: VecLoc?) {
+	fun addEntity(s: Sellable, location: VecLoc) {
 		entities.add(s, location)
 	}
 
-	fun removeEntity(location: VecLoc?) {
+	fun removeEntity(location: VecLoc) {
 		entities.remove(location)
 	}
 
@@ -63,7 +63,7 @@ class PlayerData : Serializable {
 		entities.place()
 	}
 
-	fun loadEntity(loc: VecLoc?) {
+	fun loadEntity(loc: VecLoc) {
 		entities.place(loc)
 	}
 
@@ -84,7 +84,7 @@ class PlayerData : Serializable {
 			entities.tick()
 		}
 
-		Bukkit.getScheduler().runTask(Reactor.Companion.instance!!, Runnable {
+		Bukkit.getScheduler().runTask(Reactor.Companion.instance, Runnable {
 			player!!.inventory.setItem(40, determinePauseItem())
 		})
 

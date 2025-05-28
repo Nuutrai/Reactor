@@ -7,7 +7,7 @@ import com.nuutrai.reactor.util.MultiTypeMap
 import org.bukkit.Material
 
 class DoubleUraniumCellEntity : CellEntity("uranium_double", Material.EMERALD_BLOCK), Pairable {
-	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?) {
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap) {
 		TODO()
 	}
 

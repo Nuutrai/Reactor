@@ -1,16 +1,13 @@
 package com.nuutrai.reactor.data
 
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.nuutrai.reactor.entity.Sellable
-import com.nuutrai.reactor.entity.Sellable.Companion.get
 import com.nuutrai.reactor.player.PlayerDataWrapper
 import com.nuutrai.reactor.util.VecLoc
 import org.bukkit.entity.Player
 
 object JSONConversion {
-
 	fun playerDataToJson(pd: PlayerDataWrapper): JsonObject {
 		val playerDataJson = JsonObject()
 
@@ -18,16 +15,16 @@ object JSONConversion {
 		playerDataJson.addProperty("heat", pd.heat)
 		playerDataJson.addProperty("power", pd.power)
 
-		val entityMap = pd.entities
+		val entityMap: MutableMap<VecLoc, Sellable> = pd.entities
 
 		val locations = JsonArray()
 		val entities = JsonObject()
 
-		for (vecLoc in pd.locations!!) {
+		for (vecLoc in pd.locations) {
 			val hash = vecLoc.hashCode().toString()
-			val s = entityMap!!.get(vecLoc) ?: continue
-			locations.add(vecLocToJson(vecLoc!!))
-			entities.add(hash, JSONConversion.sellableToJson(s))
+			val s = entityMap[vecLoc]
+			locations.add(vecLocToJson(vecLoc))
+			entities.add(hash, sellableToJson(mutableSetOf(s!!)))
 		}
 
 		playerDataJson.add("entities", entities)
@@ -36,16 +33,18 @@ object JSONConversion {
 		return playerDataJson
 	}
 
-	fun sellableToJson(sellable: Sellable): JsonArray {
+	fun sellableToJson(sellableCollection: MutableCollection<Sellable>): JsonArray {
 		val sellableJson = JsonArray()
 
-		val entry = JsonObject()
-		entry.addProperty("id", sellable.id)
-		//            entry.addProperty("player", s.getPlayer().toString());
-		entry.addProperty("currentHealth", sellable.currentHealth)
-		entry.add("position", vecLocToJson(sellable.position!!))
+		for (s in sellableCollection) {
+			val entry = JsonObject()
+			entry.addProperty("id", s.id)
+			//            entry.addProperty("player", s.getPlayer().toString());
+			entry.addProperty("currentHealth", s.currentHealth)
+			entry.add("position", vecLocToJson(s.position!!))
 
-		sellableJson.add(entry)
+			sellableJson.add(entry)
+		}
 
 		return sellableJson
 	}
@@ -69,47 +68,54 @@ object JSONConversion {
 		val heat = json.get("heat").asInt
 		val power = json.get("power").asInt
 
-		val entityMap = HashMap<VecLoc?, Sellable?>()
-		val locationsSet = ArrayList<VecLoc?>()
+		val entityMap = HashMap<VecLoc, Sellable>()
+		val locationsSet = ArrayList<VecLoc>()
 
 		val locationsArray = json.getAsJsonArray("locations")
 		val entitiesObject = json.getAsJsonObject("entities")
 
 		for (locElement in locationsArray) {
-			val vecLoc: VecLoc = vecLocFromJson(locElement.getAsJsonArray(), player)
+			val vecLoc: VecLoc = vecLocFromJson(locElement.getAsJsonArray(), player)[0]
 			locationsSet.add(vecLoc)
 
 			val hash = vecLoc.hashCode().toString()
 			if (entitiesObject.has(hash)) {
-				val sellable: Sellable? = sellableFromJson(entitiesObject.getAsJsonArray(hash), player)
-				entityMap.put(vecLoc, sellable)
+				val sellables = sellableFromJson(entitiesObject.getAsJsonArray(hash), player)
+				if (sellables.isEmpty()) continue
+				entityMap.put(vecLoc, sellables[0])
 			}
 		}
 
 		return PlayerDataWrapper(balance, entityMap, locationsSet, heat, power)
 	}
 
-	fun sellableFromJson(sellableElement: JsonElement, player: Player): Sellable {
+	fun sellableFromJson(json: JsonArray, player: Player): MutableList<Sellable> {
+		val sellables: MutableList<Sellable> = ArrayList()
 
-		val sellableObject = sellableElement.getAsJsonObject()
+		for (sellableElement in json) {
+			val sellableObject = sellableElement.getAsJsonObject()
 
-		val id = sellableObject.get("id").asString
-		//            String uuidAsString = sellableObject.get("player").getAsString();
+			val id = sellableObject.get("id").asString
+			//            String uuidAsString = sellableObject.get("player").getAsString();
 //            UUID uuid = UUID.fromString(uuidAsString);
-		val currentHealth = sellableObject.get("currentHealth").asDouble
-		val position: VecLoc? =
-			vecLocFromJson(sellableObject.get("position"), player)
+			val currentHealth = sellableObject.get("currentHealth").asDouble
+			val position: VecLoc =
+				vecLocFromJson((sellableObject.get("position") as JsonArray), player)[0]
 
-		val s = get(id)
-		val sellable = Sellable.create(s!!, player, position)
-		sellable.currentHealth = currentHealth
+			val s = Sellable.get(id!!)
+			val sellable = Sellable.create(s!!, player, position)
+			sellable.currentHealth = currentHealth
 
+			sellables.add(sellable)
+		}
 
-		return sellable
+		return sellables
 	}
 
-	fun vecLocFromJson(vecLoc: JsonElement, player: Player): VecLoc {
+	fun vecLocFromJson(json: JsonArray, player: Player): MutableList<VecLoc> {
+		val vecLocs: MutableList<VecLoc> = ArrayList()
 
+		for (vecLoc in json) {
 			val vecLocObject = vecLoc.getAsJsonObject()
 			val x = vecLocObject.get("x").asInt
 			val y = vecLocObject.get("y").asInt
@@ -117,7 +123,9 @@ object JSONConversion {
 
 			//            String uuidAsString = vecLocObject.get("world").getAsString();
 //            UUID uuid = UUID.fromString(uuidAsString);
+			vecLocs.add(VecLoc(x, y, z, player.uniqueId))
+		}
 
-		return VecLoc(x, y, z, player.uniqueId)
+		return vecLocs
 	}
 }

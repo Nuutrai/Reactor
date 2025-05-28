@@ -15,7 +15,6 @@ import io.papermc.paper.plugin.lifecycle.event.handler.LifecycleEventHandler
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.entity.Player
-import java.lang.Deprecated
 import java.lang.reflect.InvocationTargetException
 import kotlin.RuntimeException
 import kotlin.String
@@ -31,13 +30,13 @@ object RegisterCommands {
 			if (!m.isAnnotationPresent(Deprecated::class.java) && (m.name != "load") && !m.name
 					.contains("$")
 			) {
-				m.invoke(null)
+				m.invoke(RegisterCommands)
 			}
 		}
 	}
 
 	fun loadInventoryTest() {
-		Reactor.manager!!.registerEventHandler<ReloadableRegistrarEvent<Commands>>(
+		Reactor.manager.registerEventHandler<ReloadableRegistrarEvent<Commands>>(
 			LifecycleEvents.COMMANDS,
 			LifecycleEventHandler { event: ReloadableRegistrarEvent<Commands>? ->
 				val commands = event!!.registrar()
@@ -52,9 +51,9 @@ object RegisterCommands {
 			})
 	}
 
-	@kotlin.Deprecated("")
+	@Deprecated("")
 	fun loadDataEditor() {
-		val manager = Reactor.instance!!.lifecycleManager
+		val manager = Reactor.instance.lifecycleManager
 		manager.registerEventHandler<ReloadableRegistrarEvent<Commands>>(
 			LifecycleEvents.COMMANDS,
 			LifecycleEventHandler { event: ReloadableRegistrarEvent<Commands>? ->
@@ -73,10 +72,10 @@ object RegisterCommands {
 											val name = StringArgumentType.getString(ctx, "name")
 											val value = StringArgumentType.getString(ctx, "value")
 
-											Reactor.Companion.logger!!.info("Hello??")
-											Reactor.Companion.logger!!.info(playerData.toString())
-											Reactor.Companion.logger!!.info(name)
-											Reactor.Companion.logger!!.info(value)
+											Reactor.Companion.logger.info("Hello??")
+											Reactor.Companion.logger.info(playerData.toString())
+											Reactor.Companion.logger.info(name)
+											Reactor.Companion.logger.info(value)
 											try {
 												PlayerData::class.java.getMethod(name, String::class.java)
 													.invoke(playerData, value)

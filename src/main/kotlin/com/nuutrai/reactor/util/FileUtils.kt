@@ -1,3 +1,5 @@
+@file:Suppress("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
+
 package com.nuutrai.reactor.util
 
 import com.nuutrai.reactor.Reactor
@@ -10,12 +12,12 @@ object FileUtils {
 	fun deleteFolder(file: File): Boolean {
 		try {
 			Files.walk(file.toPath()).use { files ->
-				files.sorted(Comparator.reverseOrder<Path?>()).map<File?> { obj: Path? -> obj!!.toFile() }
+				files.sorted(Comparator.reverseOrder()).map { obj: Path? -> obj!!.toFile() }
 					.forEach { obj: File? -> obj!!.delete() }
 				return true
 			}
 		} catch (e: IOException) {
-			Reactor.Companion.logger!!.warning(e.message)
+			Reactor.Companion.logger.warning(e.message)
 			return false
 		}
 	}
@@ -28,7 +30,7 @@ object FileUtils {
 			Files.walkFileTree(sourceDir, CopyDirFileVisitor(sourceDir, targetDir, excludeFiles))
 			return true
 		} catch (e: IOException) {
-			Reactor.Companion.logger!!.warning("Unable to copy directory " + e)
+			Reactor.Companion.logger.warning("Unable to copy directory $e")
 			return false
 		}
 	}
@@ -39,8 +41,8 @@ object FileUtils {
 		private val excludeFiles: MutableList<String?>?
 	) : SimpleFileVisitor<Path?>() {
 		@Throws(IOException::class)
-		override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes?): FileVisitResult {
-			val newDir = targetDir.resolve(sourceDir.relativize(dir))
+		override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes): FileVisitResult {
+			val newDir = targetDir.resolve(sourceDir.relativize(dir ?: throw IOException()))
 			if (!Files.isDirectory(newDir)) {
 				Files.createDirectory(newDir)
 			}
@@ -48,10 +50,11 @@ object FileUtils {
 		}
 
 		@Throws(IOException::class)
-		override fun visitFile(file: Path, attrs: BasicFileAttributes?): FileVisitResult {
+		override fun visitFile(file: Path?, attrs: BasicFileAttributes): FileVisitResult {
 			// Pass files that are set to ignore
+			file ?: throw IOException()
 			if (excludeFiles != null && excludeFiles.contains(
-					file.getFileName().toString()
+					file.fileName.toString()
 				)
 			) return FileVisitResult.CONTINUE
 			// Copy the files

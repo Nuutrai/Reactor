@@ -11,11 +11,8 @@ class VecLoc : Serializable {
 	//    public String getId() {
 	//        return String.valueOf(hashCode());
 	//    }
-    @JvmField
     var x: Int
-	@JvmField
     var y: Int
-	@JvmField
     var z: Int
 	var uUID: UUID
 		private set
@@ -28,19 +25,19 @@ class VecLoc : Serializable {
 	}
 
 	constructor(location: Location, world: UUID) {
-		this.x = location.getBlockX()
-		this.y = location.getBlockY()
-		this.z = location.getBlockZ()
+		this.x = location.blockX
+		this.y = location.blockY
+		this.z = location.blockZ
 		this.uUID = world
 	}
 
 	fun toLocation(): Location {
 		try {
 			return Location(getWorld(), x.toDouble(), y.toDouble(), z.toDouble())
-		} catch (e: NullPointerException) {
-			Reactor.Companion.logger!!.severe("BUILD FALLBACK DUMB DUMB")
+		} catch (_: NullPointerException) {
+			Reactor.Companion.logger.severe("BUILD FALLBACK DUMB DUMB")
 		}
-		return Location(Bukkit.getWorlds().getFirst(), x.toDouble(), y.toDouble(), z.toDouble())
+		return Location(Bukkit.getWorlds()[0], x.toDouble(), y.toDouble(), z.toDouble())
 	}
 
 	fun toLocation(world: UUID): Location {
@@ -55,9 +52,9 @@ class VecLoc : Serializable {
 		return getWorld(this.uUID)
 	}
 
-	val neighbours: MutableList<VecLoc?>
+	val neighbours: MutableList<VecLoc>
 		get() {
-			val locs = ArrayList<VecLoc?>()
+			val locs = ArrayList<VecLoc>()
 
 			locs.add(VecLoc(x + 1, y, z, this.uUID))
 			locs.add(VecLoc(x - 1, y, z, this.uUID))
@@ -67,10 +64,10 @@ class VecLoc : Serializable {
 			return locs
 		}
 
-	override fun equals(`object`: Any?): Boolean {
-		if (this === `object`) return true
-		if (`object` == null || javaClass != `object`.javaClass) return false
-		val vecLoc = `object` as VecLoc
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null || javaClass != other.javaClass) return false
+		val vecLoc = other as VecLoc
 		return x == vecLoc.x && y == vecLoc.y && z == vecLoc.z && this.uUID == vecLoc.uUID
 	}
 

@@ -1,5 +1,6 @@
 package com.nuutrai.reactor.entity.impl.cell
 
+import com.nuutrai.reactor.Reactor
 import com.nuutrai.reactor.data.DataManager
 import com.nuutrai.reactor.entity.Pairable
 import com.nuutrai.reactor.entity.Sellable
@@ -10,15 +11,22 @@ import com.nuutrai.reactor.util.MultiTypeMap
 import org.bukkit.Material
 
 class UraniumCellEntity : CellEntity("uranium_single", Material.EMERALD_BLOCK), Pairable {
-	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?) {
-		val heatPerNeighbour: Double = params?.get<Double?>("heatPer", Double::class.javaPrimitiveType!!)!!
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap) {
+		val heatOutput: Double = params.get("heat", Double::class)!!
 
+		var adjacentVents = 0
 		for (neighbour in neighbours) {
 			if ((neighbour ?: return) is VentEntity) {
-				neighbour.health(heatPerNeighbour, ChangeMode.ADD)
+				adjacentVents++
 			}
 		}
-		System.out.printf("Ticked Cell %s, increased power by %s%n", position.toString(), power)
+		for (neighbour in neighbours) {
+			if ((neighbour ?: return) is VentEntity) {
+				neighbour.health(heat/adjacentVents, ChangeMode.ADD)
+			}
+		}
+
+		Reactor.logger.info("Ticked Cell ${position.toString()}, increased power by $power")
 		DataManager.get(player)?.addPower(power)
 	}
 

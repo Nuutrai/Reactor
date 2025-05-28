@@ -4,13 +4,13 @@ import com.nuutrai.reactor.util.VecLoc
 import java.io.Serializable
 
 class EntityHandler : Serializable {
-	val entityMap: MutableMap<VecLoc?, Sellable?> = mutableMapOf()
+	val entityMap: MutableMap<VecLoc, Sellable> = mutableMapOf()
 	val locations: ArrayList<VecLoc> = ArrayList()
 
-	fun add(entity: Sellable, location: VecLoc?) {
+	fun add(entity: Sellable, location: VecLoc) {
 		entity.entityHandler = this
 		entityMap.put(location, entity)
-		locations.add(location!!)
+		locations.add(location)
 	}
 
 	fun remove(location: VecLoc?) {
@@ -26,7 +26,7 @@ class EntityHandler : Serializable {
 
 	fun place(loc: VecLoc) {
 		val block = entityMap[loc]!!.block
-		loc.toLocation().block.type = block!!
+		loc.toLocation().block.type = block
 	}
 
 	fun get(loc: VecLoc?): Sellable? {

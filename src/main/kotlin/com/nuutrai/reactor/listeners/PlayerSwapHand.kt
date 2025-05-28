@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent
 class PlayerSwapHand : Listener {
 	@EventHandler
 	fun onSwapHand(e: PlayerSwapHandItemsEvent) {
-		e.setCancelled(true)
-		val pd = DataManager.get(e.getPlayer())
+		e.isCancelled = true
+		val pd = DataManager.get(e.getPlayer()) ?: return
 		pd.isPaused = !pd.isPaused
 	}
 }
