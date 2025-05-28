@@ -98,13 +98,13 @@ abstract class Buyable {
 	}
 
 	companion object {
-		private val BUYABLES: MutableMap<String?, Buyable?> = Maps.newHashMap<String?, Buyable?>()
+		private val BUYABLES: MutableMap<String, Buyable> = mutableMapOf()
 
-		@JvmStatic
-        fun get(id: String?): Buyable? {
-			return BUYABLES[id]
+        fun get(id: String): Buyable {
+			return BUYABLES[id]!!
 		}
 
+		@JvmStatic
 		fun add(b: Buyable) {
 			BUYABLES.put(b.id, b)
 		}

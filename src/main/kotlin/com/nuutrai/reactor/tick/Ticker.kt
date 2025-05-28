@@ -6,7 +6,7 @@ import org.bukkit.Bukkit
 class Ticker {
 	fun tick() {
 		for (player in Bukkit.getOnlinePlayers()) {
-			DataManager.get(player).tick()
+			DataManager.get(player)?.tick() ?: continue
 		}
 	}
 }

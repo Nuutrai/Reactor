@@ -56,7 +56,7 @@ class PlayerPlaceEntity : Listener {
 
 			val key = NamespacedKey(Reactor.instance!!, "reactor-id")
 			val id =
-				item.itemMeta.persistentDataContainer.get<String?, String?>(key, PersistentDataType.STRING!!)
+				item.itemMeta.persistentDataContainer.get<String, String>(key, PersistentDataType.STRING!!)
 			if (id == null || id.isEmpty()) return
 
 			// End
@@ -73,7 +73,7 @@ class PlayerPlaceEntity : Listener {
 		private const val timeToPurge = 1000
 
 		fun breakEntity(p: Player, vecloc: VecLoc) {
-			val pd = DataManager.get(p)
+			val pd = DataManager.get(p) ?: return
 
 			if (pd.entities.get(vecloc) == null) {
 				p.inventory.setItem(4, ItemStack.of(Material.AIR))
@@ -84,22 +84,23 @@ class PlayerPlaceEntity : Listener {
 			vecloc.toLocation().block.type = Material.AIR
 		}
 
-		fun place(id: String?, p: Player?, vecLoc: VecLoc) {
+		fun place(id: String, p: Player, vecLoc: VecLoc) {
 //        Cell cell = Cell.getCell(id).clone();
 
-			val pd = DataManager.get(p)
+			val copy = Sellable.get(id) ?: return
 
-			val copy = Sellable.get(id)
+			val pd = DataManager.get(p) ?: return
+
 			val entity = Sellable.create(copy, p, vecLoc)
 
-			Reactor.Companion.logger!!.info("" + pd.balance)
-			Reactor.Companion.logger!!.info("" + entity.getType().cost)
+			Reactor.Companion.logger.info("" + pd.balance)
+			Reactor.Companion.logger.info("" + entity.type.cost)
 
 			val block = entity.block
 			val location = vecLoc.toLocation()
-			location.block.setType(block)
+			location.block.type = block
 
-			DataManager.get(p).addEntity(entity, vecLoc)
+			DataManager.get(p)?.addEntity(entity, vecLoc)
 		}
 	}
 }

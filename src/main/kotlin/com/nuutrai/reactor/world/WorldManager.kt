@@ -20,31 +20,30 @@ import java.util.concurrent.Executors
  * Make a world teleport command based on a player
  */
 object WorldManager {
-	private val log: Logger? = LoggerFactory.getLogger(WorldManager::class.java)
-	var plugin: Reactor? = Reactor.instance
-	var worlds: HashSet<Player> = HashSet<Player>()
+	private val log: Logger = LoggerFactory.getLogger(WorldManager::class.java)
+	var plugin: Reactor = Reactor.instance
+	var worlds: MutableSet<Player> = mutableSetOf()
 	var generator: VoidGenerator = VoidGenerator(plugin)
 
-	@JvmStatic
     fun createWorld(player: Player): World? {
-		val worldName = player.getUniqueId().toString()
+		val worldName = player.uniqueId.toString()
 
-		val worldFolder = File(plugin!!.getServer().getWorldContainer(), worldName)
+		val worldFolder = File(plugin.server.worldContainer, worldName)
 		if (worldFolder.exists()) {
 			FileUtils.deleteFolder(worldFolder)
 		}
 
 		val executor = Executors.newCachedThreadPool()
 
-		val future = executor.submit<Boolean?>(Callable {
-			Reactor.Companion.logger!!.info("1")
+		val future = executor.submit(Callable {
+			Reactor.Companion.logger.info("1")
 			cloneWorld("init", worldName)
 		})
 
 		try {
 			if (!future.get()!!) {
-				Reactor.Companion.logger!!.info("2")
-				Reactor.Companion.logger!!.severe("Womp womp")
+				Reactor.Companion.logger.info("2")
+				Reactor.Companion.logger.severe("Womp womp")
 				return null
 			}
 		} catch (e: InterruptedException) {
@@ -53,16 +52,16 @@ object WorldManager {
 			e.printStackTrace()
 		}
 
-		Reactor.Companion.logger!!.info("3")
+		Reactor.Companion.logger.info("3")
 
 		addWorld(worldName)
 
 		worlds.add(player)
-		val pd = DataManager.get(player)
+		val pd = DataManager.get(player) ?: throw IllegalArgumentException()
 		pd.isPaused = true
 		pd.loadAllEntities()
 
-		Reactor.Companion.logger!!.info("Done")
+		Reactor.Companion.logger.info("Done")
 
 		return Bukkit.getWorld(worldName)
 	}
@@ -70,7 +69,7 @@ object WorldManager {
 	fun init(): Boolean {
 		val worldName = "init"
 
-		val worldFolder = File(plugin!!.getServer().getWorldContainer(), worldName)
+		val worldFolder = File(plugin.server.worldContainer, worldName)
 		if (worldFolder.exists()) {
 			return true
 		}
@@ -81,23 +80,23 @@ object WorldManager {
 	}
 
 	fun cloneWorld(oldName: String, newName: String): Boolean {
-		val oldWorldFile = File(plugin!!.getServer().getWorldContainer(), oldName)
-		val newWorldFile = File(plugin!!.getServer().getWorldContainer(), newName)
-		val ignoreFiles: MutableList<String?> = ArrayList<String?>(mutableListOf<String?>("session.lock", "uid.dat"))
+		val oldWorldFile = File(plugin.server.worldContainer, oldName)
+		val newWorldFile = File(plugin.server.worldContainer, newName)
+		val ignoreFiles: MutableList<String?> = ArrayList(mutableListOf<String?>("session.lock", "uid.dat"))
 
 		if (newWorldFile.exists()) {
-			Reactor.Companion.logger!!.warning("Folder for new world '" + newName + "' already exists")
+			Reactor.Companion.logger.warning("Folder for new world '$newName' already exists")
 			return false
 		}
 
-		Reactor.Companion.logger!!.info("Copying files for world '" + oldName + "'")
+		Reactor.Companion.logger.info("Copying files for world '$oldName'")
 		if (!FileUtils.copyFolder(oldWorldFile, newWorldFile, ignoreFiles)) {
-			Reactor.Companion.logger!!.warning("Failed to copy files for world '" + newName + "', see the log info")
+			Reactor.Companion.logger.warning("Failed to copy files for world '$newName', see the log info")
 			return false
 		}
 
 		if (newWorldFile.exists()) {
-			Reactor.Companion.logger!!.info("Succeeded at copying files")
+			Reactor.Companion.logger.info("Succeeded at copying files")
 			return true
 		}
 
@@ -121,25 +120,24 @@ object WorldManager {
 		return true
 	}
 
-	@JvmStatic
     fun deleteWorld(player: Player): Boolean {
-		val worldName = player.getUniqueId().toString()
-		val world = plugin!!.getServer().getWorld(worldName)
+		val worldName = player.uniqueId.toString()
+		val world = plugin.server.getWorld(worldName)
 		if (world == null) {
 			return false
 		}
 
-		plugin!!.getServer().unloadWorld(worldName, false)
+		plugin.server.unloadWorld(worldName, false)
 
 		try {
-			val worldFile = world.getWorldFolder()
-			Reactor.Companion.logger!!.finer("deleteWorld(): worldFile: " + worldFile.getAbsolutePath())
+			val worldFile = world.worldFolder
+			Reactor.Companion.logger.finer("deleteWorld(): worldFile: ${worldFile.absolutePath}")
 			FileUtils.deleteFolder(worldFile)
-			Reactor.Companion.logger!!.info(String.format("World '%s' was DELETED.", worldName))
+			Reactor.Companion.logger.info("World '$worldName' was DELETED.")
 			worlds.remove(player)
 			return true
-		} catch (e: Throwable) {
-			Reactor.Companion.logger!!.info("Whoa, not sure what happened here!")
+		} catch (_: Throwable) {
+			Reactor.Companion.logger.info("Whoa, not sure what happened here!")
 			return false
 		}
 	}

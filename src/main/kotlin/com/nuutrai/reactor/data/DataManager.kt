@@ -65,9 +65,9 @@ object DataManager {
 			val myWriter = FileWriter(file)
 			myWriter.write(string)
 			myWriter.close()
-			Reactor.Companion.logger!!.info("Successfully wrote to the file.")
+			Reactor.Companion.logger.info("Successfully wrote to the file.")
 		} catch (_: IOException) {
-			Reactor.Companion.logger!!.severe("An error occurred whilst writing to a file.")
+			Reactor.Companion.logger.severe("An error occurred whilst writing to a file.")
 		}
 	}
 
@@ -87,8 +87,8 @@ object DataManager {
 			myReader.close()
 			return data.toString()
 		} catch (e: FileNotFoundException) {
-			Reactor.Companion.logger!!.severe("An error occurred.")
-			Reactor.Companion.logger!!.severe(e.message)
+			Reactor.Companion.logger.severe("An error occurred.")
+			Reactor.Companion.logger.severe(e.message)
 		}
 		return null
 	}
@@ -101,14 +101,14 @@ object DataManager {
 		try {
 			val myObj = File(Reactor.dataFolder, player.uniqueId.toString() + ".json")
 			if (myObj.createNewFile()) {
-				Reactor.Companion.logger!!.info("File created: " + myObj.getName())
+				Reactor.Companion.logger.info("File created: " + myObj.getName())
 				savePlayerData(player)
 			} else {
-				Reactor.Companion.logger!!.info("File already exists.")
+				Reactor.Companion.logger.info("File already exists.")
 			}
 		} catch (e: IOException) {
-			Reactor.Companion.logger!!.severe("An error occurred whilst writing to a file.")
-			Reactor.Companion.logger!!.severe(e.message)
+			Reactor.Companion.logger.severe("An error occurred whilst writing to a file.")
+			Reactor.Companion.logger.severe(e.message)
 		}
 	}
 }

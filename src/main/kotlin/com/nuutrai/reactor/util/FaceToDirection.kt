@@ -4,7 +4,6 @@ import org.bukkit.block.BlockFace
 import org.bukkit.util.Vector
 
 object FaceToDirection {
-	@JvmStatic
 	fun get(blockFace: BlockFace): Vector {
 		return blockFace.getDirection()
 	}

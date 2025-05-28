@@ -7,11 +7,11 @@ import com.nuutrai.reactor.util.MultiTypeMap
 import com.nuutrai.reactor.util.VecLoc
 import org.bukkit.Material
 
-abstract class CellEntity(id: String, block: Material?) : Sellable(id, block) {
+abstract class CellEntity(id: String, block: Material) : Sellable(id, block) {
 	override fun tick() {
 		val map = MultiTypeMap()
 
-		val neighbours = position!!.neighbours.toTypedArray<VecLoc?>()
+		val neighbours = position!!.neighbours.toTypedArray<VecLoc>()
 		val neighbourEntitiesArray = ArrayList<Sellable?>()
 
 		val heatOutput = heat
@@ -27,6 +27,8 @@ abstract class CellEntity(id: String, block: Material?) : Sellable(id, block) {
 		health(1.0, ChangeMode.DECREASE)
 
 		val neighbourEntities = neighbourEntitiesArray.toTypedArray()
+
+		map.add("heat", heat)
 
 		tick(neighbourEntities, map)
 	}

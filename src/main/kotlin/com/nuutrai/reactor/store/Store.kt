@@ -1,6 +1,7 @@
 package com.nuutrai.reactor.store
 
 import com.google.common.collect.MultimapBuilder
+import com.nuutrai.reactor.Reactor
 import com.nuutrai.reactor.data.DataManager
 import com.nuutrai.reactor.item.Buyable
 import net.kyori.adventure.text.Component
@@ -14,14 +15,14 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 object Store {
-	@JvmStatic
+
     fun setup(player: Player) {
-		val inventory: Inventory = player.getInventory()
+		val inventory: Inventory = player.inventory
 
 		val items = getItems(player)
 
 		for (i in items.indices) {
-			inventory.setItem(i, items.get(i))
+			inventory.setItem(i, items[i])
 		}
 	}
 
@@ -32,10 +33,10 @@ object Store {
 			items.add(background)
 		}
 
-		val playerData = DataManager.get(player)
+		val playerData = DataManager.get(player)!!
 
 		val power = ItemStack(Material.WIND_CHARGE)
-		val powerMeta = power.getItemMeta()
+		val powerMeta = power.itemMeta
 		powerMeta.displayName(
 			Component.text(playerData.power.toString() + " Power", NamedTextColor.AQUA)
 				.decoration(TextDecoration.ITALIC, false)
@@ -45,7 +46,7 @@ object Store {
 
 		items.add(ItemStack.of(Material.AIR))
 		val heat = ItemStack(Material.BLAZE_POWDER)
-		val heatMeta = heat.getItemMeta()
+		val heatMeta = heat.itemMeta
 		heatMeta.displayName(
 			Component.text(playerData.heat.toString() + " Heat", NamedTextColor.RED)
 				.decoration(TextDecoration.ITALIC, false)
@@ -60,9 +61,9 @@ object Store {
 		/*
          Type-s-Stage
         */
-		val cs1 = ItemStack(Buyable.get("uranium_single").item)
-		val cs2 = ItemStack(Buyable.get("uranium_double").item)
-		val cs3 = ItemStack(Buyable.get("uranium_quad").item)
+		val cs1 = ItemStack(Buyable.get("uranium_single").item!!)
+		val cs2 = ItemStack(Buyable.get("uranium_double").item!!)
+		val cs3 = ItemStack(Buyable.get("uranium_quad").item!!)
 
 		items.add(cs1)
 		items.add(cs2)
@@ -72,8 +73,8 @@ object Store {
 			items.add(background)
 		}
 
-		val vs1 = ItemStack(Buyable.get("basic_vent").item)
-		val vs2 = ItemStack(Buyable.get("advanced_vent").item)
+		val vs1 = ItemStack(Buyable.get("basic_vent").item!!)
+		val vs2 = ItemStack(Buyable.get("advanced_vent").item!!)
 
 		items.add(vs1)
 		items.add(vs2)
@@ -94,11 +95,9 @@ object Store {
 	private val background: ItemStack
 		get() {
 			val item = ItemStack(Material.GRAY_STAINED_GLASS_PANE)
-			val itemMeta = item.getItemMeta()
-			itemMeta.setHideTooltip(true)
-			itemMeta.setAttributeModifiers(
-				MultimapBuilder.hashKeys().hashSetValues().build<Attribute?, AttributeModifier?>()
-			)
+			val itemMeta = item.itemMeta
+			itemMeta.isHideTooltip = true
+			itemMeta.attributeModifiers = MultimapBuilder.hashKeys().hashSetValues().build<Attribute?, AttributeModifier?>()
 			item.setItemMeta(itemMeta)
 			return item
 		}

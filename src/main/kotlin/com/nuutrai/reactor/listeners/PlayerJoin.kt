@@ -27,11 +27,11 @@ class PlayerJoin : Listener {
 			world.setGameRule<Boolean?>(GameRule.DO_MOB_LOOT, false)
 			Bukkit.getScheduler().runTaskLater(Reactor.Companion.instance!!, Runnable {
 				p.teleport(Location(world, 0.0, 121.0, 0.0))
-				p.setAllowFlight(true)
+				p.allowFlight = true
 			}, 20)
 		})
 
-		if (p.getName() == "Nuutrai") {
+		if (p.name == "Nuutrai") {
 //            Claim claim = new Claim(p);
 //            claim.newEntity(Cell.);
 //            DataManager.get(p).setClaim(new Claim(p));

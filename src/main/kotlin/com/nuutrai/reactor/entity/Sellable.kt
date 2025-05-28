@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
  * @position The position (VecLoc) of the sellable
  * @currentHealth The current health of the sellable (To be determined at the end of the tick)
  */
-abstract class Sellable(val id: String, val block: Material?) {
+abstract class Sellable(val id: String, val block: Material) {
 	val maxHealth: Double
 	var player: Player? = null
 		private set
@@ -40,7 +40,7 @@ abstract class Sellable(val id: String, val block: Material?) {
 		this.maxHealth = this.type!!.health
 	}
 
-	val type: Buyable?
+	val type: Buyable
 		get() = Buyable.get(id)
 
 	val power: Int
@@ -69,7 +69,7 @@ abstract class Sellable(val id: String, val block: Material?) {
 		}
 	}
 
-	abstract fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap?)
+	abstract fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap)
 
 	abstract fun tick()
 
@@ -94,7 +94,7 @@ abstract class Sellable(val id: String, val block: Material?) {
 	}
 
 	companion object {
-		private val SELLABLES: MutableMap<String?, Sellable?> = Maps.newHashMap<String?, Sellable?>()
+		private val SELLABLES = mutableMapOf<String, Sellable>()
 
 		fun create(sellable: Sellable, player: Player, position: Location): Sellable {
 			return create(sellable, player, VecLoc(position, player.uniqueId))
@@ -109,12 +109,13 @@ abstract class Sellable(val id: String, val block: Material?) {
 			return s
 		}
 
-        fun get(id: String?): Sellable? {
+        fun get(id: String): Sellable? {
 			return SELLABLES[id]
 		}
 
+		@JvmStatic
 		fun add(s: Sellable) {
-			SELLABLES.put(s.type!!.id, s)
+			SELLABLES.put(s.type.id, s)
 		}
 	}
 }

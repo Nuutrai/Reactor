@@ -6,7 +6,7 @@ import com.nuutrai.reactor.util.MultiTypeMap
 import org.bukkit.Material
 
 class AdvancedVentEntity : VentEntity("advanced_vent", Material.IRON_BLOCK) {
-	override fun tick(neighbours: Array<Sellable>?, params: MultiTypeMap?) {
+	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap) {
 	}
 
 	override val sellAmount: Double
