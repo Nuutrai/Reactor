@@ -4,6 +4,7 @@ import com.google.common.collect.MultimapBuilder
 import com.nuutrai.reactor.Reactor
 import com.nuutrai.reactor.data.DataManager
 import com.nuutrai.reactor.item.Buyable
+import com.nuutrai.reactor.player.PlayerData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -35,23 +36,11 @@ object Store {
 
 		val playerData = DataManager.get(player)!!
 
-		val power = ItemStack(Material.WIND_CHARGE)
-		val powerMeta = power.itemMeta
-		powerMeta.displayName(
-			Component.text(playerData.power.toString() + " Power", NamedTextColor.AQUA)
-				.decoration(TextDecoration.ITALIC, false)
-		)
-		power.setItemMeta(powerMeta)
+		val power = getPowerItem(playerData)
 		items.add(power)
 
 		items.add(ItemStack.of(Material.AIR))
-		val heat = ItemStack(Material.BLAZE_POWDER)
-		val heatMeta = heat.itemMeta
-		heatMeta.displayName(
-			Component.text(playerData.heat.toString() + " Heat", NamedTextColor.RED)
-				.decoration(TextDecoration.ITALIC, false)
-		)
-		heat.setItemMeta(heatMeta)
+		val heat = getHeatItem(playerData)
 		items.add(heat)
 
 		for (i in 0..2) {
@@ -90,6 +79,28 @@ object Store {
 		items.add(playerData.determinePauseItem())
 
 		return items
+	}
+
+	fun getHeatItem(playerData: PlayerData): ItemStack {
+		val heat = ItemStack(Material.BLAZE_POWDER)
+		val heatMeta = heat.itemMeta
+		heatMeta.displayName(
+			Component.text(playerData.heat.toString() + " Heat", NamedTextColor.RED)
+				.decoration(TextDecoration.ITALIC, false)
+		)
+		heat.setItemMeta(heatMeta)
+		return heat
+	}
+
+	fun getPowerItem(playerData: PlayerData): ItemStack {
+		val power = ItemStack(Material.WIND_CHARGE)
+		val powerMeta = power.itemMeta
+		powerMeta.displayName(
+			Component.text(playerData.power.toString() + " Power", NamedTextColor.AQUA)
+				.decoration(TextDecoration.ITALIC, false)
+		)
+		power.setItemMeta(powerMeta)
+		return power
 	}
 
 	private val background: ItemStack

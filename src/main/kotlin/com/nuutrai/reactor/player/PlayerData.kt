@@ -3,6 +3,7 @@ package com.nuutrai.reactor.player
 import com.nuutrai.reactor.Reactor
 import com.nuutrai.reactor.entity.EntityHandler
 import com.nuutrai.reactor.entity.Sellable
+import com.nuutrai.reactor.store.Store
 import com.nuutrai.reactor.util.VecLoc
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -21,7 +22,7 @@ class PlayerData : Serializable {
 	var power: Int = 0
     var selection: ItemStack = ItemStack.of(Material.AIR)
     var isPaused: Boolean = true
-	private var player: Player? = null
+	private lateinit var player: Player
 
 	constructor()
 
@@ -68,11 +69,11 @@ class PlayerData : Serializable {
 	}
 
 	fun loadEntity(loc: Location) {
-		loadEntity(VecLoc(loc, player!!.uniqueId))
+		loadEntity(VecLoc(loc, player.uniqueId))
 	}
 
 	fun getPlayer(): Player {
-		return player!!
+		return player
 	}
 
 	fun setPlayer(player: Player) {
@@ -84,8 +85,11 @@ class PlayerData : Serializable {
 			entities.tick()
 		}
 
+		player.inventory.setItem(5, Store.getHeatItem(this))
+		player.inventory.setItem(3, Store.getPowerItem(this))
+
 		Bukkit.getScheduler().runTask(Reactor.Companion.instance, Runnable {
-			player!!.inventory.setItem(40, determinePauseItem())
+			player.inventory.setItem(40, determinePauseItem())
 		})
 
 		update()
