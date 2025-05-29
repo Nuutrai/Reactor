@@ -12,7 +12,8 @@ import org.bukkit.Material
 
 class UraniumCellEntity : CellEntity("uranium_single", Material.EMERALD_BLOCK), Pairable {
 	override fun tick(neighbours: Array<Sellable?>, params: MultiTypeMap) {
-		val heatOutput: Double = params.get("heat", Double::class)!!
+
+		val heatOutput: Double = params["heat"]
 
 		var adjacentVents = 0
 		for (neighbour in neighbours) {

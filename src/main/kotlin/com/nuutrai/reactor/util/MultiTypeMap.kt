@@ -7,7 +7,8 @@ import java.io.Serializable
 import kotlin.reflect.KClass
 
 class MultiTypeMap {
-	private val map: MutableMap<String, ByteArray> = mutableMapOf()
+	val map: MutableMap<String, ByteArray> = mutableMapOf()
+		private set
 
 	fun add(key: String, value: Any): Boolean {
 		if (value is Serializable) {
@@ -17,13 +18,28 @@ class MultiTypeMap {
 		return false
 	}
 
-	fun <T : Serializable> get(key: String, clazz: KClass<out T>): T? {
+	inline operator fun <reified T : Serializable> get(key: String): T {
 		val value = SerializationUtils.deserialize<T>(map[key])
 
-		if (clazz.isInstance(value)) {
-			return value as T
+		if (value == null) {
+			throw IllegalArgumentException("Object from MultiTypeMap is null: $key")
 		}
-
-		return null
+		if (T::class.isInstance(value)) {
+			return value
+		}
+		throw IllegalArgumentException("Object from MultiTypeMap does not exist: $key")
 	}
+
+	inline operator fun <reified T : Serializable> get(key: String, clazz: KClass<out T>): T {
+		val value = SerializationUtils.deserialize<T>(map[key])
+
+		if (value == null) {
+			throw IllegalArgumentException("Object from MultiTypeMap is null: $key")
+		}
+		if (clazz.isInstance(value)) {
+			return value
+		}
+		throw IllegalArgumentException("Object from MultiTypeMap does not exist: $key")
+	}
+
 }
