@@ -31,8 +31,7 @@ object DataManager {
 		val json = gson.fromJson(jsonString, JsonObject::class.java)
 
 		val playerDataWrapper = playerDataFromJson(json, player)
-		val playerData = PlayerData(playerDataWrapper)
-		playerData.setPlayer(player)
+		val playerData = PlayerData(playerDataWrapper, player)
 		playerData.selection = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE)
 		playerDataMap.put(player, playerData)
 	}
@@ -94,8 +93,7 @@ object DataManager {
 	}
 
 	private fun initData(player: Player) {
-		val playerData = PlayerData()
-		playerData.setPlayer(player)
+		val playerData = PlayerData(player)
 		playerDataMap.put(player, playerData)
 
 		try {

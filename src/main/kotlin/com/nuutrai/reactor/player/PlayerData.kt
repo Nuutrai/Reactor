@@ -22,11 +22,14 @@ class PlayerData : Serializable {
 	var power: Int = 0
     var selection: ItemStack = ItemStack.of(Material.AIR)
     var isPaused: Boolean = true
-	private lateinit var player: Player
+	var player: Player
 
-	constructor()
+	constructor(player: Player) {
+		this.player = player
+	}
 
-	constructor(playerDataWrapper: PlayerDataWrapper) {
+	constructor(playerDataWrapper: PlayerDataWrapper, player: Player) {
+		this.player = player
 		this.balance = playerDataWrapper.balance
 		this.heat = playerDataWrapper.heat
 		this.power = playerDataWrapper.power
